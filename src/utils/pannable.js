@@ -5,10 +5,11 @@ export function pannable(node) {
   function handleMousedown(event) {
     x = event.clientX;
     y = event.clientY;
+    const target = event.target;
 
     node.dispatchEvent(
       new CustomEvent('panstart', {
-        detail: { x, y },
+        detail: { x, y, target },
       })
     );
 

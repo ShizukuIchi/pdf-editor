@@ -1,77 +1,113 @@
 <script>
+  // import { onMount } from "svelte";
   import Tailwind from "./Tailwind.svelte";
   import PDFPage from "./PDFPage.svelte";
   import Image from "./Image.svelte";
-  import { getImage } from "./utils/image.js";
-  import { readAsArrayBuffer } from "./utils/asyncReader.js";
+  import {
+    readAsArrayBuffer,
+    readAsImage,
+    readAsPDF
+  } from "./utils/asyncReader.js";
+  import { genID } from "./utils/id.js";
+  import { save } from "./utils/PDF.js";
   let pdfFile;
   let pages = [];
   let allObjects = [];
-  let selectedPage = null;
+  let selectedPageIndex = -1;
+  // onMount(async () => {
+  //   const res = await fetch("test.pdf");
+  //   const blob = await res.blob();
+  //   const objectURL = URL.createObjectURL(blob);
+  //   pdfFile = blob;
+  //   const pdf = await pdfjsLib.getDocument(objectURL);
+  //   const numPages = pdf._pdfInfo.numPages;
+  //   pages = Array(numPages)
+  //     .fill()
+  //     .map((_, i) => pdf.getPage(i + 1));
+  //   allObjects = pages.map(() => []);
+  //   selectedPageIndex = 0;
+  //   const id = genID();
+  //   const imgBlob = await (await fetch("test.svg")).blob();
+  //   const img = await readAsImage(imgBlob);
+  //   const { width, height } = img;
+  //   const pageObjects = allObjects[selectedPageIndex];
+  //   const object = {
+  //     id,
+  //     type: "image",
+  //     width,
+  //     height,
+  //     x: 0,
+  //     y: 0,
+  //     payload: img,
+  //     file: imgBlob
+  //   };
+  //   allObjects = allObjects.map((objects, pIndex) =>
+  //     pIndex === selectedPageIndex ? [...objects, object] : objects
+  //   );
+  // });
   async function onUploadPDF(e) {
     const file = e.target.files[0];
-    if (!file) return;
-    selectedPage = null;
+    if (!file || file.type !== "application/pdf") return;
+    selectedPageIndex = -1;
     pdfFile = file;
-    const pdf = await pdfjsLib.getDocument(URL.createObjectURL(file));
-    const numPages = pdf._pdfInfo.numPages;
-    pages = Array(numPages)
-      .fill()
-      .map((_, i) => pdf.getPage(i + 1));
-    allObjects = pages.map(() => []);
-    selectedPage = 0;
+    try {
+      const pdf = await readAsPDF(file);
+      const numPages = pdf._pdfInfo.numPages;
+      pages = Array(numPages)
+        .fill()
+        .map((_, i) => pdf.getPage(i + 1));
+      allObjects = pages.map(() => []);
+      selectedPageIndex = 0;
+    } catch (e) {
+      console.log(e);
+    }
   }
   async function onUploadImage(e) {
-    if (selectedPage === null) return;
+    if (selectedPageIndex < 0) return;
     const file = e.target.files[0];
     if (!file) return;
-    const currentSelectPage = selectedPage;
-    const img = await getImage(file);
-    const { width, height } = img;
-    const pageObjects = allObjects[selectedPage];
-    const object = {
-      type: "image",
-      width,
-      height,
-      x: 0,
-      y: 0,
-      payload: img,
-      file,
-      page: currentSelectPage
-    };
-    allObjects[selectedPage] = [...pageObjects, object];
+    const id = genID();
+    try {
+      const img = await readAsImage(file);
+      const { width, height } = img;
+      const pageObjects = allObjects[selectedPageIndex];
+      const object = {
+        id,
+        type: "image",
+        width,
+        height,
+        x: 0,
+        y: 0,
+        payload: img,
+        file
+      };
+      allObjects = allObjects.map((objects, pIndex) =>
+        pIndex === selectedPageIndex ? [...objects, object] : objects
+      );
+    } catch (e) {
+      console.log(e);
+    }
     e.target.value = null;
   }
-  function onClick(index) {
-    selectedPage = index;
+  function selectPage(index) {
+    selectedPageIndex = index;
   }
-  function move(pageIndex, objectIndex, payload) {
-    const { x, y } = payload;
-    allObjects[pageIndex][objectIndex].x = x;
-    allObjects[pageIndex][objectIndex].y = y;
-  }
-  async function save() {
-    if (!pdfFile) return;
-    const pdfDoc = await PDFLib.PDFDocument.load(
-      await readAsArrayBuffer(pdfFile)
+  function updateObject(objectId, payload) {
+    allObjects = allObjects.map((objects, pIndex) =>
+      pIndex == selectedPageIndex
+        ? objects.map(object =>
+            object.id === objectId ? { ...object, ...payload } : object
+          )
+        : objects
     );
-    const pages = pdfDoc.getPages().map(async (page, pageIndex) => {
-      const ps = allObjects[pageIndex].map(async object => {
-        const { file, x, y, width, height } = object;
-        // maybe there's race condition
-        const png = await pdfDoc.embedPng(await readAsArrayBuffer(file));
-        page.drawImage(png, {
-          x,
-          y: page.getHeight() - y - height,
-          width,
-          height
-        });
-      });
-      return Promise.all(ps);
-    });
-    await Promise.all(pages);
-    const pdfBytes = await pdfDoc.save();
-    download(pdfBytes, pdfFile.name, "application/pdf");
+  }
+  async function savePDF() {
+    if (!pdfFile) return;
+    try {
+      await save(pdfFile, allObjects);
+    } catch (e) {
+      console.log(e);
+    }
   }
 </script>
 
@@ -105,48 +141,51 @@
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
         for="image"
-        class:cursor-not-allowed={selectedPage === null}>
+        class:cursor-not-allowed={selectedPageIndex < 0}>
         圖
       </label>
       <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
         for="text"
-        class:cursor-not-allowed={selectedPage === null}>
+        class:cursor-not-allowed={selectedPageIndex < 0}>
         字
       </label>
       <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
         for="pen"
-        class:cursor-not-allowed={selectedPage === null}>
+        class:cursor-not-allowed={selectedPageIndex < 0}>
         筆
       </label>
     </div>
     <button
-      on:click={save}
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4
+      on:click={savePDF}
+      class="mr-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4
       rounded"
-      class:cursor-not-allowed={selectedPage === null}>
+      class:cursor-not-allowed={selectedPageIndex < 0}>
       Save
     </button>
   </div>
   {#if pages.length}
     <div>
-      {#each pages as page, index (page)}
+      {#each pages as page, pIndex (page)}
         <div
           class="relative shadow-lg mb-4 last:mb-0 overflow-hidden"
-          class:shadow-outline={index === selectedPage}
-          on:click={() => onClick(index)}>
+          class:shadow-outline={pIndex === selectedPageIndex}
+          on:click={() => selectPage(pIndex)}>
           <PDFPage {page} />
-          {#each allObjects[index] as object, oIndex (object)}
-            <Image
-              on:move={e => move(index, oIndex, e.detail)}
-              payload={object.payload}
-              x={object.x}
-              y={object.y}
-              width={object.width}
-              height={object.height} />
+          {#each allObjects[pIndex] as object (object.id)}
+            {#if object.type === 'image'}
+              <Image
+                on:update={e => updateObject(object.id, e.detail)}
+                file={object.file}
+                payload={object.payload}
+                x={object.x}
+                y={object.y}
+                width={object.width}
+                height={object.height} />
+            {/if}
           {/each}
         </div>
       {/each}
