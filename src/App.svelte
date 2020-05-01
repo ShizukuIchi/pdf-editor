@@ -15,35 +15,38 @@
   let allObjects = [];
   let selectedPageIndex = -1;
   // onMount(async () => {
-  //   const res = await fetch("test.pdf");
-  //   const blob = await res.blob();
-  //   const objectURL = URL.createObjectURL(blob);
-  //   pdfFile = blob;
-  //   const pdf = await pdfjsLib.getDocument(objectURL);
-  //   const numPages = pdf._pdfInfo.numPages;
-  //   pages = Array(numPages)
-  //     .fill()
-  //     .map((_, i) => pdf.getPage(i + 1));
-  //   allObjects = pages.map(() => []);
-  //   selectedPageIndex = 0;
-  //   const id = genID();
-  //   const imgBlob = await (await fetch("test.svg")).blob();
-  //   const img = await readAsImage(imgBlob);
-  //   const { width, height } = img;
-  //   const pageObjects = allObjects[selectedPageIndex];
-  //   const object = {
-  //     id,
-  //     type: "image",
-  //     width,
-  //     height,
-  //     x: 0,
-  //     y: 0,
-  //     payload: img,
-  //     file: imgBlob
-  //   };
-  //   allObjects = allObjects.map((objects, pIndex) =>
-  //     pIndex === selectedPageIndex ? [...objects, object] : objects
-  //   );
+  //   try {
+  //     const res = await fetch("test.pdf");
+  //     const blob = await res.blob();
+  //     pdfFile = blob;
+  //     const pdf = await readAsPDF(blob);
+  //     const numPages = pdf.numPages;
+  //     pages = Array(numPages)
+  //       .fill()
+  //       .map((_, i) => pdf.getPage(i + 1));
+  //     allObjects = pages.map(() => []);
+  //     selectedPageIndex = 0;
+  //     const id = genID();
+  //     const imgBlob = await (await fetch("test.svg")).blob();
+  //     const img = await readAsImage(imgBlob);
+  //     const { width, height } = img;
+  //     const pageObjects = allObjects[selectedPageIndex];
+  //     const object = {
+  //       id,
+  //       type: "image",
+  //       width,
+  //       height,
+  //       x: 0,
+  //       y: 0,
+  //       payload: img,
+  //       file: imgBlob
+  //     };
+  //     allObjects = allObjects.map((objects, pIndex) =>
+  //       pIndex === selectedPageIndex ? [...objects, object] : objects
+  //     );
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
   // });
   async function onUploadPDF(e) {
     const file = e.target.files[0];
@@ -52,7 +55,7 @@
     pdfFile = file;
     try {
       const pdf = await readAsPDF(file);
-      const numPages = pdf._pdfInfo.numPages;
+      const numPages = pdf.numPages;
       pages = Array(numPages)
         .fill()
         .map((_, i) => pdf.getPage(i + 1));

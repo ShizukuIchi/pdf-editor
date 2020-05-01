@@ -26,5 +26,5 @@ export function readAsImage(file) {
 
 export function readAsPDF(file) {
   if (!pdfjsLib) throw new Error('PDF.js not loaded yet.');
-  return pdfjsLib.getDocument(URL.createObjectURL(file));
+  return pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
 }
