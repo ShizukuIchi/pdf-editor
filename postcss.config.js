@@ -3,7 +3,12 @@ const purgecss = require('@fullhuman/postcss-purgecss')({
 
   whitelistPatterns: [/svelte-/],
 
-  defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
+  defaultExtractor: (content) => {
+    // Recommend: /[\w-/:]+(?<!:)/g
+    const standard = content.match(/[\w-/:]+/g) || [];
+    const svelteClass = content.match(/(?<=class:)[\w-/:]+/g) || [];
+    return standard.concat(svelteClass);
+  },
 });
 
 const production = !process.env.ROLLUP_WATCH;
