@@ -8,13 +8,21 @@
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/build/bundle.css" />
+    <link
+      rel="preload"
+      href="/NotoSansTC-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <style type="text/css">
       @font-face {
         font-family: 'Noto Sans TC';
-        src: url('/NotoSansTC-Regular.otf');
+        font-style: normal;
+        font-weight: 400;
+        src: url('/NotoSansTC-Regular.woff2') format('woff2');
       }
     </style>
-    <link rel="prefetch" href="/NotoSansTC-Regular.otf" />
     <script defer src="/build/bundle.js"></script>
   </head>
 
