@@ -1,6 +1,7 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { pannable } from "./utils/pannable.js";
+  import { timeout } from "./utils/helper.js";
   export let size;
   export let text;
   export let lineHeight;
@@ -10,7 +11,6 @@
   let editable;
   let _size = size;
   let _lineHeight = lineHeight;
-  let innerHTML = text;
   let dx = 0;
   let dy = 0;
   let operation = "";
@@ -38,10 +38,19 @@
     operation = "edit";
   }
   function onBlur() {
+    sanitize();
     dispatch("update", {
-      text: innerHTML
+      text: editable.innerHTML
     });
     operation = "";
+  }
+  async function onPaste(e) {
+    // get text only
+    const pastedText = e.clipboardData.getData("text");
+    document.execCommand("insertHTML", false, pastedText);
+    // await tick() is not enough
+    await timeout();
+    sanitize();
   }
   function onKeydown(e) {
     const childNodes = Array.from(editable.childNodes);
@@ -74,7 +83,21 @@
       }
     }
   }
-  // onMount(render);
+  function sanitize() {
+    let weirdNode;
+    while (
+      (weirdNode = Array.from(editable.childNodes).find(
+        node => !["#text", "BR"].includes(node.nodeName)
+      ))
+    ) {
+      editable.removeChild(weirdNode);
+    }
+  }
+  function render() {
+    editable.innerHTML = text;
+    editable.focus();
+  }
+  onMount(render);
 </script>
 
 <svelte:options immutable={true} />
@@ -86,20 +109,19 @@
     on:panstart={handlePanStart}
     on:panmove={handlePanMove}
     on:panend={handlePanEnd}
-    class="absolute w-full h-full cursor-grab border border-dashed
+    class="absolute w-full h-full cursor-grab border {operation === 'edit' ? 'border-dotted' : 'border-dashed'}
     border-gray-600"
     class:cursor-grab={!operation}
     class:cursor-grabbing={operation === 'move'}
     class:pointer-events-none={operation === 'edit'} />
   <div
     bind:this={editable}
-    bind:innerHTML
     on:focus={onFocus}
     on:blur={onBlur}
     on:keydown={onKeydown}
+    on:paste|preventDefault={onPaste}
     contenteditable="true"
     spellcheck="false"
-    class="outline-none"
-    style="font-size: {_size}px; line-height: {_lineHeight}; font-family: 'Noto
-    Sans TC';" />
+    class="outline-none whitespace-no-wrap"
+    style="font-size: {_size}px; font-family: 'Noto Sans TC'; line-height: {_lineHeight};" />
 </div>
