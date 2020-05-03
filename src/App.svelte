@@ -1,8 +1,9 @@
 <script>
-  // import { onMount } from "svelte";
+  import { onMount } from "svelte";
   import Tailwind from "./Tailwind.svelte";
   import PDFPage from "./PDFPage.svelte";
   import Image from "./Image.svelte";
+  import Text from "./Text.svelte";
   import {
     readAsArrayBuffer,
     readAsImage,
@@ -11,39 +12,20 @@
   import { genID } from "./utils/id.js";
   import { save } from "./utils/PDF.js";
   let pdfFile;
+  let pdfName = "";
   let pages = [];
   let allObjects = [];
   let selectedPageIndex = -1;
+
   // onMount(async () => {
   //   try {
-  //     const res = await fetch("test.pdf");
-  //     const blob = await res.blob();
-  //     pdfFile = blob;
-  //     const pdf = await readAsPDF(blob);
-  //     const numPages = pdf.numPages;
-  //     pages = Array(numPages)
-  //       .fill()
-  //       .map((_, i) => pdf.getPage(i + 1));
-  //     allObjects = pages.map(() => []);
+  //     const res = await fetch("/test.pdf");
+  //     const pdfBlob = await res.blob();
+  //     await addPDF(pdfBlob);
   //     selectedPageIndex = 0;
-  //     const id = genID();
-  //     const imgBlob = await (await fetch("test.svg")).blob();
-  //     const img = await readAsImage(imgBlob);
-  //     const { width, height } = img;
-  //     const pageObjects = allObjects[selectedPageIndex];
-  //     const object = {
-  //       id,
-  //       type: "image",
-  //       width,
-  //       height,
-  //       x: 0,
-  //       y: 0,
-  //       payload: img,
-  //       file: imgBlob
-  //     };
-  //     allObjects = allObjects.map((objects, pIndex) =>
-  //       pIndex === selectedPageIndex ? [...objects, object] : objects
-  //     );
+  //     const imgBlob = await (await fetch("/test.svg")).blob();
+  //     // addImage(imgBlob);
+  //     addTextField("New Text Field!");
   //   } catch (e) {
   //     console.log(e);
   //   }
@@ -52,28 +34,40 @@
     const file = e.target.files[0];
     if (!file || file.type !== "application/pdf") return;
     selectedPageIndex = -1;
-    pdfFile = file;
+    try {
+      await addPDF(file);
+      selectedPageIndex = 0;
+    } catch (e) {
+      selectedPageIndex = -1;
+    }
+  }
+  async function addPDF(file) {
     try {
       const pdf = await readAsPDF(file);
+      pdfName = file.name;
+      pdfFile = file;
       const numPages = pdf.numPages;
       pages = Array(numPages)
         .fill()
         .map((_, i) => pdf.getPage(i + 1));
       allObjects = pages.map(() => []);
-      selectedPageIndex = 0;
     } catch (e) {
-      console.log(e);
+      console.log("Failed to add pdf.", e);
+      throw e;
     }
   }
   async function onUploadImage(e) {
-    if (selectedPageIndex < 0) return;
     const file = e.target.files[0];
-    if (!file) return;
-    const id = genID();
+    if (file && selectedPageIndex >= 0) {
+      addImage(file);
+    }
+    e.target.value = null;
+  }
+  async function addImage(file) {
     try {
       const img = await readAsImage(file);
+      const id = genID();
       const { width, height } = img;
-      const pageObjects = allObjects[selectedPageIndex];
       const object = {
         id,
         type: "image",
@@ -88,9 +82,28 @@
         pIndex === selectedPageIndex ? [...objects, object] : objects
       );
     } catch (e) {
-      console.log(e);
+      console.log(`Fail to add image.`, e);
     }
-    e.target.value = null;
+  }
+  async function onAddTextField() {
+    if (selectedPageIndex >= 0) {
+      addTextField();
+    }
+  }
+  function addTextField(text = "New Text Field") {
+    const id = genID();
+    const object = {
+      id,
+      text,
+      type: "text",
+      size: 30,
+      lineHeight: 1.4,
+      x: 0,
+      y: 0
+    };
+    allObjects = allObjects.map((objects, pIndex) =>
+      pIndex === selectedPageIndex ? [...objects, object] : objects
+    );
   }
   function selectPage(index) {
     selectedPageIndex = index;
@@ -107,7 +120,7 @@
   async function savePDF() {
     if (!pdfFile) return;
     try {
-      await save(pdfFile, allObjects);
+      await save(pdfFile, allObjects, pdfName);
     } catch (e) {
       console.log(e);
     }
@@ -138,28 +151,36 @@
       for="pdf">
       Upload PDF
     </label>
-    <span class="mr-4">{pdfFile ? pdfFile.name : ''}</span>
+    <span contenteditable="true" bind:innerHTML={pdfName} class="mr-4" />
     <div class="relative flex h-8 bg-gray-400 mr-4 rounded-sm overflow-hidden">
       <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
         for="image"
         class:cursor-not-allowed={selectedPageIndex < 0}>
-        圖
+        <img src="image.svg" alt="An icon for adding images" />
       </label>
       <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
         for="text"
-        class:cursor-not-allowed={selectedPageIndex < 0}>
-        字
+        class:cursor-not-allowed={selectedPageIndex < 0}
+        on:click={onAddTextField}>
+        <img src="text.svg" alt="An icon for adding text" />
       </label>
       <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
         for="pen"
         class:cursor-not-allowed={selectedPageIndex < 0}>
-        筆
+        <img src="gesture.svg" alt="An icon for adding drawing" />
+      </label>
+      <label
+        class="flex items-center justify-center h-full w-8 hover:bg-gray-500
+        cursor-pointer"
+        for="pen"
+        class:cursor-not-allowed={selectedPageIndex < 0}>
+        <img src="add.svg" alt="An icon for create material" />
       </label>
     </div>
     <button
@@ -171,25 +192,37 @@
     </button>
   </div>
   {#if pages.length}
-    <div>
+    <div class="w-full">
       {#each pages as page, pIndex (page)}
+        <!-- style="border: 1px solid rgba(0,0,0,{pIndex === selectedPageIndex ? 0.1 : 0});" -->
+
         <div
-          class="relative shadow-lg mb-4 last:mb-0 overflow-hidden"
-          class:shadow-outline={pIndex === selectedPageIndex}
-          on:click={() => selectPage(pIndex)}>
-          <PDFPage {page} />
-          {#each allObjects[pIndex] as object (object.id)}
-            {#if object.type === 'image'}
-              <Image
-                on:update={e => updateObject(object.id, e.detail)}
-                file={object.file}
-                payload={object.payload}
-                x={object.x}
-                y={object.y}
-                width={object.width}
-                height={object.height} />
-            {/if}
-          {/each}
+          class="p-5 w-full flex flex-col items-center overflow-y-hidden"
+          on:mousedown={() => selectPage(pIndex)}>
+          <div
+            class="relative shadow-lg"
+            class:shadow-outline={pIndex === selectedPageIndex}>
+            <PDFPage {page} />
+            {#each allObjects[pIndex] as object (object.id)}
+              {#if object.type === 'image'}
+                <Image
+                  on:update={e => updateObject(object.id, e.detail)}
+                  file={object.file}
+                  payload={object.payload}
+                  x={object.x}
+                  y={object.y}
+                  width={object.width}
+                  height={object.height} />
+              {:else if object.type === 'text'}
+                <Text
+                  on:update={e => updateObject(object.id, e.detail)}
+                  text={object.text}
+                  x={object.x}
+                  y={object.y}
+                  size={object.size} />
+              {/if}
+            {/each}
+          </div>
         </div>
       {/each}
     </div>

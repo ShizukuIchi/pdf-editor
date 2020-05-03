@@ -8,17 +8,39 @@
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/build/bundle.css" />
+    <style type="text/css">
+      @font-face {
+        font-family: 'Noto Sans TC';
+        src: url('/NotoSansTC-Regular.otf');
+      }
+    </style>
+    <link rel="prefetch" href="/NotoSansTC-Regular.otf" />
     <script defer src="/build/bundle.js"></script>
   </head>
 
   <body></body>
   <script
     async
+    data-async
     src="https://unpkg.com/pdfjs-dist@2.3.200/build/pdf.min.js"
+    id="pdfjsLib"
   ></script>
   <script
     async
+    data-async
     src="https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js"
+    id="PDFLib"
   ></script>
-  <script async src="https://unpkg.com/downloadjs@1.4.7"></script>
+  <script
+    async
+    data-async
+    src="https://unpkg.com/downloadjs@1.4.7"
+    id="download"
+  ></script>
+  <script
+    async
+    data-async
+    src="https://unpkg.com/@pdf-lib/fontkit@0.0.4/dist/fontkit.umd.min.js"
+    id="fontkit"
+  ></script>
 </html>

@@ -24,7 +24,7 @@ export function readAsImage(file) {
   });
 }
 
-export function readAsPDF(file) {
-  if (!pdfjsLib) throw new Error('PDF.js not loaded yet.');
+export async function readAsPDF(file) {
+  const pdfjsLib = await window.getScript('pdfjsLib');
   return pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
 }
