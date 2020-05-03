@@ -9,27 +9,28 @@
     readAsImage,
     readAsPDF
   } from "./utils/asyncReader.js";
-  import { genID } from "./utils/id.js";
+  import { ggID } from "./utils/helper.js";
   import { save } from "./utils/PDF.js";
+  const genID = ggID();
   let pdfFile;
   let pdfName = "";
   let pages = [];
   let allObjects = [];
   let selectedPageIndex = -1;
 
-  // onMount(async () => {
-  //   try {
-  //     const res = await fetch("/test.pdf");
-  //     const pdfBlob = await res.blob();
-  //     await addPDF(pdfBlob);
-  //     selectedPageIndex = 0;
-  //     const imgBlob = await (await fetch("/test.svg")).blob();
-  //     // addImage(imgBlob);
-  //     addTextField("New Text Field!");
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // });
+  onMount(async () => {
+    try {
+      const res = await fetch("/test.pdf");
+      const pdfBlob = await res.blob();
+      await addPDF(pdfBlob);
+      selectedPageIndex = 0;
+      // const imgBlob = await (await fetch("/test.svg")).blob();
+      // addImage(imgBlob);
+      // addTextField("New Text Field!");
+    } catch (e) {
+      console.log(e);
+    }
+  });
   async function onUploadPDF(e) {
     const file = e.target.files[0];
     if (!file || file.type !== "application/pdf") return;
@@ -219,7 +220,8 @@
                   text={object.text}
                   x={object.x}
                   y={object.y}
-                  size={object.size} />
+                  size={object.size}
+                  lineHeight={object.lineHeight} />
               {/if}
             {/each}
           </div>

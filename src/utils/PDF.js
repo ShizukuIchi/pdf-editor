@@ -3,9 +3,7 @@ import { readAsArrayBuffer } from './asyncReader.js';
 const noop = () => {};
 
 async function registerFontkit(pdfDoc) {
-  const getFont = fetch('/NotoSansTC-Regular.woff2').then((r) =>
-    r.arrayBuffer()
-  );
+  const getFont = fetch('/NotoSansTC-Regular.otf').then((r) => r.arrayBuffer());
   const fontkit = await window.getScript('fontkit');
   pdfDoc.registerFontkit(fontkit);
   return await getFont;
