@@ -17,7 +17,6 @@ export async function save(pdfFile, objects, name) {
     // 'y' starts from bottom in PDFLib, use this to calculate y
     const pageHeight = page.getHeight();
     const pageWidth = page.getWidth();
-    const scale = scales[pageIndex];
     const embedProcesses = pageObjects.map(async (object) => {
       if (object.type === 'image') {
         let { file, x, y, width, height } = object;

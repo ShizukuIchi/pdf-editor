@@ -221,5 +221,6 @@
     contenteditable="true"
     spellcheck="false"
     class="outline-none whitespace-no-wrap"
-    style="font-size: {_size}px; font-family: '{_fontFamily}'; line-height: {_lineHeight};" />
+    style="font-size: {_size}px; font-family: '{_fontFamily}'; line-height: {_lineHeight};
+    -webkit-user-select: text;" />
 </div>
