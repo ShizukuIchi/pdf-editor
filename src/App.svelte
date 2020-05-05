@@ -15,22 +15,25 @@
   let pdfFile;
   let pdfName = "";
   let pages = [];
+  let pagesWidth = [];
+  let measures = [];
   let allObjects = [];
   let selectedPageIndex = -1;
-
-  onMount(async () => {
-    try {
-      const res = await fetch("/test.pdf");
-      const pdfBlob = await res.blob();
-      await addPDF(pdfBlob);
-      selectedPageIndex = 0;
-      // const imgBlob = await (await fetch("/test.svg")).blob();
-      // addImage(imgBlob);
-      // addTextField("New Text Field!");
-    } catch (e) {
-      console.log(e);
-    }
-  });
+  let saving = false;
+  // for test purpose
+  // onMount(async () => {
+  //   try {
+  //     const res = await fetch("/test.pdf");
+  //     const pdfBlob = await res.blob();
+  //     await addPDF(pdfBlob);
+  //     selectedPageIndex = 0;
+  //     const imgBlob = await (await fetch("/test.svg")).blob();
+  //     addImage(imgBlob);
+  //     addTextField("New Text Field!");
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // });
   async function onUploadPDF(e) {
     const file = e.target.files[0];
     if (!file || file.type !== "application/pdf") return;
@@ -52,8 +55,10 @@
         .fill()
         .map((_, i) => pdf.getPage(i + 1));
       allObjects = pages.map(() => []);
+      pagesWidth = Array(numPages).fill(1);
+      measures = Array(numPages).fill(1);
     } catch (e) {
-      console.log("Failed to add pdf.", e);
+      console.log("Failed to add pdf.");
       throw e;
     }
   }
@@ -91,14 +96,15 @@
       addTextField();
     }
   }
-  function addTextField(text = "New Text Field") {
+  function addTextField(text = "新文字方塊 New Text Field") {
     const id = genID();
     const object = {
       id,
       text,
       type: "text",
-      size: 30,
+      size: 16,
       lineHeight: 1.4,
+      fontFamily: "CK",
       x: 0,
       y: 0
     };
@@ -118,19 +124,28 @@
         : objects
     );
   }
+  function onMeasure(width, i) {
+    measures[i] = width;
+  }
+  // FIXME: Should wait all objects finish their async work
   async function savePDF() {
-    if (!pdfFile) return;
+    if (!pdfFile || saving || !pages.length) return;
+    saving = true;
     try {
-      await save(pdfFile, allObjects, pdfName);
+      const scales = measures.map((width, index) => {
+        return pagesWidth[index] / width;
+      });
+      await save(pdfFile, allObjects, pdfName, scales);
     } catch (e) {
       console.log(e);
+    } finally {
+      saving = false;
     }
   }
 </script>
 
 <Tailwind />
-<main class="flex justify-center items-stretch p-20 bg-gray-100 min-h-screen">
-
+<main class="flex flex-col items-center py-16 bg-gray-100 min-h-screen">
   <div
     class="fixed z-10 top-0 left-0 right-0 h-12 flex justify-center items-center
     bg-gray-200 border-b border-gray-300">
@@ -150,15 +165,15 @@
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4
       rounded mr-4 cursor-pointer"
       for="pdf">
-      Upload PDF
+      Choose PDF
     </label>
-    <span contenteditable="true" bind:innerHTML={pdfName} class="mr-4" />
-    <div class="relative flex h-8 bg-gray-400 mr-4 rounded-sm overflow-hidden">
+    <div class="relative mr-4 flex h-8 bg-gray-400 rounded-sm overflow-hidden">
       <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
         for="image"
-        class:cursor-not-allowed={selectedPageIndex < 0}>
+        class:cursor-not-allowed={selectedPageIndex < 0}
+        class:bg-gray-500={selectedPageIndex < 0}>
         <img src="image.svg" alt="An icon for adding images" />
       </label>
       <label
@@ -166,10 +181,13 @@
         cursor-pointer"
         for="text"
         class:cursor-not-allowed={selectedPageIndex < 0}
+        class:bg-gray-500={selectedPageIndex < 0}
         on:click={onAddTextField}>
-        <img src="text.svg" alt="An icon for adding text" />
+        <img src="notes.svg" alt="An icon for adding text" />
       </label>
-      <label
+
+      <!-- coming soon -->
+      <!-- <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
         for="pen"
@@ -182,54 +200,78 @@
         for="pen"
         class:cursor-not-allowed={selectedPageIndex < 0}>
         <img src="add.svg" alt="An icon for create material" />
-      </label>
+      </label> -->
+    </div>
+    <div class="justify-center mr-4 w-full max-w-xs hidden md:flex">
+      <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
+      <input
+        placeholder="PDF file name"
+        type="text"
+        class="flex-grow bg-transparent"
+        bind:value={pdfName} />
     </div>
     <button
       on:click={savePDF}
-      class="mr-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4
+      class="w-24 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4
       rounded"
-      class:cursor-not-allowed={selectedPageIndex < 0}>
-      Save
+      class:cursor-not-allowed={pages.length === 0 || saving || !pdfFile}
+      class:bg-blue-700={pages.length === 0 || saving || !pdfFile}>
+      {saving ? 'Saving' : 'Save'}
     </button>
+
   </div>
   {#if pages.length}
+    <div class="flex justify-center px-5 w-full md:hidden">
+      <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
+      <input
+        type="text"
+        class="flex-grow bg-transparent"
+        bind:value={pdfName} />
+    </div>
     <div class="w-full">
       {#each pages as page, pIndex (page)}
-        <!-- style="border: 1px solid rgba(0,0,0,{pIndex === selectedPageIndex ? 0.1 : 0});" -->
-
         <div
           class="p-5 w-full flex flex-col items-center overflow-y-hidden"
           on:mousedown={() => selectPage(pIndex)}>
           <div
             class="relative shadow-lg"
+            bind:clientWidth={pagesWidth[pIndex]}
             class:shadow-outline={pIndex === selectedPageIndex}>
-            <PDFPage {page} />
-            {#each allObjects[pIndex] as object (object.id)}
-              {#if object.type === 'image'}
-                <Image
-                  on:update={e => updateObject(object.id, e.detail)}
-                  file={object.file}
-                  payload={object.payload}
-                  x={object.x}
-                  y={object.y}
-                  width={object.width}
-                  height={object.height} />
-              {:else if object.type === 'text'}
-                <Text
-                  on:update={e => updateObject(object.id, e.detail)}
-                  text={object.text}
-                  x={object.x}
-                  y={object.y}
-                  size={object.size}
-                  lineHeight={object.lineHeight} />
-              {/if}
-            {/each}
+            <PDFPage
+              on:measure={e => onMeasure(e.detail.width, pIndex)}
+              {page} />
+            <div
+              class="absolute top-0 left-0 transform origin-top-left"
+              style="transform: scale({pagesWidth[pIndex] / measures[pIndex]});">
+              {#each allObjects[pIndex] as object (object.id)}
+                {#if object.type === 'image'}
+                  <Image
+                    on:update={e => updateObject(object.id, e.detail)}
+                    file={object.file}
+                    payload={object.payload}
+                    x={object.x}
+                    y={object.y}
+                    width={object.width}
+                    height={object.height} />
+                {:else if object.type === 'text'}
+                  <Text
+                    on:update={e => updateObject(object.id, e.detail)}
+                    text={object.text}
+                    x={object.x}
+                    y={object.y}
+                    size={object.size}
+                    lineHeight={object.lineHeight}
+                    fontFamily={object.fontFamily} />
+                {/if}
+              {/each}
+
+            </div>
           </div>
         </div>
       {/each}
     </div>
   {:else}
-    <div class="w-full flex justify-center items-center">
+    <div class="w-full flex-grow flex justify-center items-center">
       <span class=" font-bold text-3xl text-gray-500">Drag something here</span>
     </div>
   {/if}

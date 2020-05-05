@@ -1,6 +1,7 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   export let page;
+  const dispatch = createEventDispatcher();
   let canvas;
   let width;
   let height;
@@ -14,12 +15,12 @@
       canvasContext: context,
       viewport: viewport
     });
+    dispatch("measure", {
+      width,
+      height
+    });
   }
   onMount(render);
 </script>
 
-<canvas
-  bind:this={canvas}
-  style="width: {width}px; height: {height}px;"
-  {width}
-  {height} />
+<canvas bind:this={canvas} class="w-full" {width} {height} />

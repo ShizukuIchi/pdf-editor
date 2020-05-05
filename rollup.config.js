@@ -1,6 +1,8 @@
 import svelte from 'rollup-plugin-svelte';
+import open from 'open';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
@@ -27,27 +29,14 @@ export default {
       },
     }),
 
-    // If you have external dependencies installed from
-    // npm, you'll most likely need these plugins. In
-    // some cases you'll need additional configuration -
-    // consult the documentation for details:
-    // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
       browser: true,
       dedupe: ['svelte'],
     }),
     commonjs(),
-
-    // In dev mode, call `npm run start` once
-    // the bundle has been generated
+    // json(),
     !production && serve(),
-
-    // Watch the `public` directory and refresh the
-    // browser on changes when not in production
     !production && livereload('public'),
-
-    // If we're building for production (npm run build
-    // instead of npm run dev), minify
     production && terser(),
   ],
   watch: {
@@ -63,10 +52,11 @@ function serve() {
       if (!started) {
         started = true;
 
-        require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
+        require('child_process').spawn('yarn', ['start', '--dev'], {
           stdio: ['ignore', 'inherit', 'inherit'],
           shell: true,
         });
+        open('http://localhost:5000');
       }
     },
   };

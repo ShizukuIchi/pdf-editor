@@ -10,9 +10,16 @@
     <link rel="stylesheet" href="/build/bundle.css" />
     <link
       rel="preload"
-      href="/NotoSansTC-Regular.otf"
+      href="/NotoSansTC-Regular.woff2"
       as="font"
-      type="font/otf"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/CK.woff2"
+      as="font"
+      type="font/woff2"
       crossorigin
     />
     <style type="text/css">
@@ -20,9 +27,16 @@
         font-family: 'Noto Sans TC';
         font-style: normal;
         font-weight: 400;
-        src: url('/NotoSansTC-Regular.otf') format('opentype');
+        src: url('/NotoSansTC-Regular.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'CK';
+        font-style: normal;
+        font-weight: 400;
+        src: url('/CK.woff2') format('woff2');
       }
     </style>
+    
     <script defer src="/build/bundle.js"></script>
   </head>
 
@@ -45,10 +59,5 @@
     src="https://unpkg.com/downloadjs@1.4.7"
     id="download"
   ></script>
-  <script
-    async
-    data-async
-    src="https://unpkg.com/@pdf-lib/fontkit@0.0.4/dist/fontkit.umd.min.js"
-    id="fontkit"
-  ></script>
+</script><script async data-async src="/make-font.js" id="makeFont"></script>
 </html>

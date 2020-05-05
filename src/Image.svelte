@@ -1,7 +1,7 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { pannable } from "./utils/pannable.js";
-  import { readAsArrayBuffer } from "./utils/asyncReader";
+  import { readAsArrayBuffer } from "./utils/asyncReader.js";
   export let payload;
   export let file;
   export let width;
@@ -16,7 +16,7 @@
   let dy = 0;
   let dw = 0;
   let dh = 0;
-  function render() {
+  async function render() {
     // use canvas to prevent img tag's auto resize
     canvas.width = width;
     canvas.height = height;
