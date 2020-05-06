@@ -189,8 +189,8 @@
       class="hidden"
       on:change={onUploadImage} />
     <label
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4
-      rounded mr-4 cursor-pointer"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3
+      md:px-4 rounded mr-4 cursor-pointer"
       for="pdf">
       Choose PDF
     </label>
@@ -237,13 +237,17 @@
     </div>
     <button
       on:click={savePDF}
-      class="w-24 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4
-      rounded"
+      class="w-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3
+      md:px-4 mr-4 rounded"
       class:cursor-not-allowed={pages.length === 0 || saving || !pdfFile}
       class:bg-blue-700={pages.length === 0 || saving || !pdfFile}>
-      {saving ? 'Saving' : 'Save'}
+      {saving ? 'Saving' : 'Saving'}
     </button>
-
+    <a href="https://github.com/ShizukuIchi/pdf-editor">
+      <img
+        src="/GitHub-Mark-32px.png"
+        alt="A GitHub icon leads to personal GitHub page" />
+    </a>
   </div>
   {#if addingDrawing}
     <div
