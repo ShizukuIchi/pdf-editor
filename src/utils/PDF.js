@@ -2,9 +2,10 @@ import { readAsArrayBuffer } from './asyncReader.js';
 import { noop } from './helper.js';
 
 export async function save(pdfFile, objects, name) {
-  const PDFLib = await window.getScript('PDFLib');
-  const download = await window.getScript('download');
-  const makeFont = await window.getScript('makeFont');
+  const PDFLib = await window.getAsset('PDFLib');
+  const download = await window.getAsset('download');
+  const makeFont = await window.getAsset('makeFont');
+  const CK = await window.getAsset('CK');
   let pdfDoc;
   try {
     pdfDoc = await PDFLib.PDFDocument.load(await readAsArrayBuffer(pdfFile));
@@ -42,15 +43,39 @@ export async function save(pdfFile, objects, name) {
         let { x, y, lines, lineHeight, size } = object;
 
         const [textPage] = await pdfDoc.embedPdf(
-          await makeFont(lines, size, lineHeight, pageWidth, pageHeight)
+          await makeFont(lines, size, lineHeight, pageWidth, pageHeight, CK)
         );
         return () =>
-          pdfDoc.getPages()[0].drawPage(textPage, {
+          page.drawPage(textPage, {
             width: pageWidth,
             height: pageHeight,
             x,
             y: -y,
           });
+      } else if (object.type === 'drawing') {
+        let { x, y, path, scale } = object;
+        const {
+          pushGraphicsState,
+          setLineCap,
+          popGraphicsState,
+          setLineJoin,
+          LineCapStyle,
+          LineJoinStyle,
+        } = PDFLib;
+        return () => {
+          page.pushOperators(
+            pushGraphicsState(),
+            setLineCap(LineCapStyle.Round),
+            setLineJoin(LineJoinStyle.Round)
+          );
+          page.drawSvgPath(path, {
+            borderWidth: 5,
+            scale,
+            x,
+            y: pageHeight - y,
+          });
+          page.pushOperators(popGraphicsState());
+        };
       }
     });
     // embed objects in order

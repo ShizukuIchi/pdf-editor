@@ -25,6 +25,6 @@ export function readAsImage(file) {
 }
 
 export async function readAsPDF(file) {
-  const pdfjsLib = await window.getScript('pdfjsLib');
+  const pdfjsLib = await window.getAsset('pdfjsLib');
   return pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
 }

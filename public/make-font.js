@@ -43,18 +43,16 @@
           const blobStream = require('blob-stream');
           const fontkit = require('fontkit');
           const PDFDocument = require('pdfkit');
-
-          const fontName = 'CKs';
-          const fontPath = fontName + '.ttf';
+          const fontName = 'CK';
 
           window.makeFont = async function makeFont(
             lines,
             size,
             lineHeight,
             width,
-            height
+            height,
+            fontBlob
           ) {
-            const fontBlob = await fetch(fontPath).then((r) => r.arrayBuffer());
             const customFont = fontkit.create(new Buffer(fontBlob)).stream
               .buffer;
             const doc = new PDFDocument({

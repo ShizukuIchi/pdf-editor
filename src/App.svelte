@@ -1,9 +1,12 @@
 <script>
   import { onMount } from "svelte";
+  import { fly } from "svelte/transition";
   import Tailwind from "./Tailwind.svelte";
   import PDFPage from "./PDFPage.svelte";
   import Image from "./Image.svelte";
   import Text from "./Text.svelte";
+  import Drawing from "./Drawing.svelte";
+  import DrawingCanvas from "./DrawingCanvas.svelte";
   import {
     readAsArrayBuffer,
     readAsImage,
@@ -20,20 +23,22 @@
   let allObjects = [];
   let selectedPageIndex = -1;
   let saving = false;
+  let addingDrawing = false;
   // for test purpose
-  // onMount(async () => {
-  //   try {
-  //     const res = await fetch("/test.pdf");
-  //     const pdfBlob = await res.blob();
-  //     await addPDF(pdfBlob);
-  //     selectedPageIndex = 0;
-  //     const imgBlob = await (await fetch("/test.svg")).blob();
-  //     addImage(imgBlob);
-  //     addTextField("New Text Field!");
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // });
+  onMount(async () => {
+    try {
+      const res = await fetch("/test.pdf");
+      const pdfBlob = await res.blob();
+      await addPDF(pdfBlob);
+      selectedPageIndex = 0;
+      // const imgBlob = await (await fetch("/test.jpg")).blob();
+      // addImage(imgBlob);
+      // addTextField("測試 New Text Field!");
+      // addDrawing(200, 100, "M30,30 L100,50 L50,70", 0.5);
+    } catch (e) {
+      console.log(e);
+    }
+  });
   async function onUploadPDF(e) {
     const file = e.target.files[0];
     if (!file || file.type !== "application/pdf") return;
@@ -91,7 +96,7 @@
       console.log(`Fail to add image.`, e);
     }
   }
-  async function onAddTextField() {
+  function onAddTextField() {
     if (selectedPageIndex >= 0) {
       addTextField();
     }
@@ -105,8 +110,30 @@
       size: 16,
       lineHeight: 1.4,
       fontFamily: "CK",
-      x: 0,
+      x: 100,
       y: 0
+    };
+    allObjects = allObjects.map((objects, pIndex) =>
+      pIndex === selectedPageIndex ? [...objects, object] : objects
+    );
+  }
+  function onAddDrawing() {
+    if (selectedPageIndex >= 0) {
+      addingDrawing = true;
+    }
+  }
+  function addDrawing(originWidth, originHeight, path, scale = 1) {
+    const id = genID();
+    const object = {
+      id,
+      path,
+      type: "drawing",
+      x: 0,
+      y: 0,
+      originWidth,
+      originHeight,
+      width: originWidth * scale,
+      scale
     };
     allObjects = allObjects.map((objects, pIndex) =>
       pIndex === selectedPageIndex ? [...objects, object] : objects
@@ -185,19 +212,17 @@
         on:click={onAddTextField}>
         <img src="notes.svg" alt="An icon for adding text" />
       </label>
-
+      <label
+        class="flex items-center justify-center h-full w-8 hover:bg-gray-500
+        cursor-pointer"
+        on:click={onAddDrawing}
+        class:cursor-not-allowed={selectedPageIndex < 0}>
+        <img src="gesture.svg" alt="An icon for adding drawing" />
+      </label>
       <!-- coming soon -->
       <!-- <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
-        for="pen"
-        class:cursor-not-allowed={selectedPageIndex < 0}>
-        <img src="gesture.svg" alt="An icon for adding drawing" />
-      </label>
-      <label
-        class="flex items-center justify-center h-full w-8 hover:bg-gray-500
-        cursor-pointer"
-        for="pen"
         class:cursor-not-allowed={selectedPageIndex < 0}>
         <img src="add.svg" alt="An icon for create material" />
       </label> -->
@@ -205,7 +230,7 @@
     <div class="justify-center mr-4 w-full max-w-xs hidden md:flex">
       <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
       <input
-        placeholder="PDF file name"
+        placeholder="Rename your PDF here"
         type="text"
         class="flex-grow bg-transparent"
         bind:value={pdfName} />
@@ -220,10 +245,26 @@
     </button>
 
   </div>
+  {#if addingDrawing}
+    <div
+      transition:fly={{ y: -200, duration: 500 }}
+      class="fixed z-10 top-0 left-0 right-0 border-b border-gray-300 bg-white
+      shadow-lg"
+      style="height: 50%;">
+      <DrawingCanvas
+        on:finish={e => {
+          const { originWidth, originHeight, path } = e.detail;
+          const scale = 400 / originWidth;
+          addDrawing(originWidth, originHeight, path, scale);
+          addingDrawing = false;
+        }} />
+    </div>
+  {/if}
   {#if pages.length}
     <div class="flex justify-center px-5 w-full md:hidden">
       <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
       <input
+        placeholder="Rename your PDF here"
         type="text"
         class="flex-grow bg-transparent"
         bind:value={pdfName} />
@@ -232,7 +273,8 @@
       {#each pages as page, pIndex (page)}
         <div
           class="p-5 w-full flex flex-col items-center overflow-y-hidden"
-          on:mousedown={() => selectPage(pIndex)}>
+          on:mousedown={() => selectPage(pIndex)}
+          on:touchstart={() => selectPage(pIndex)}>
           <div
             class="relative shadow-lg"
             bind:clientWidth={pagesWidth[pIndex]}
@@ -252,7 +294,8 @@
                     x={object.x}
                     y={object.y}
                     width={object.width}
-                    height={object.height} />
+                    height={object.height}
+                    pageScale={pagesWidth[pIndex] / measures[pIndex]} />
                 {:else if object.type === 'text'}
                   <Text
                     on:update={e => updateObject(object.id, e.detail)}
@@ -261,7 +304,18 @@
                     y={object.y}
                     size={object.size}
                     lineHeight={object.lineHeight}
-                    fontFamily={object.fontFamily} />
+                    fontFamily={object.fontFamily}
+                    pageScale={pagesWidth[pIndex] / measures[pIndex]} />
+                {:else if object.type === 'drawing'}
+                  <Drawing
+                    on:update={e => updateObject(object.id, e.detail)}
+                    path={object.path}
+                    x={object.x}
+                    y={object.y}
+                    width={object.width}
+                    originWidth={object.originWidth}
+                    originHeight={object.originHeight}
+                    pageScale={pagesWidth[pIndex] / measures[pIndex]} />
                 {/if}
               {/each}
 

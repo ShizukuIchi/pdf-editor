@@ -8,7 +8,10 @@
   export let height;
   export let x;
   export let y;
+  export let pageScale = 1;
   const dispatch = createEventDispatcher();
+  let startX;
+  let startY;
   let canvas;
   let operation = "";
   let directions = [];
@@ -21,6 +24,18 @@
     canvas.width = width;
     canvas.height = height;
     canvas.getContext("2d").drawImage(payload, 0, 0);
+    let scale = 1;
+    const limit = 500;
+    if (width > limit) {
+      scale = limit / width;
+    }
+    if (height > limit) {
+      scale = Math.min(scale, limit / height);
+    }
+    dispatch("update", {
+      width: width * scale,
+      height: height * scale
+    });
     if (file.type === "image/svg+xml") {
       canvas.toBlob(blob => {
         dispatch("update", {
@@ -30,23 +45,25 @@
     }
   }
   function handlePanMove(event) {
+    const _dx = (event.detail.x - startX) / pageScale;
+    const _dy = (event.detail.y - startY) / pageScale;
     if (operation === "move") {
-      dx += event.detail.dx;
-      dy += event.detail.dy;
+      dx = _dx;
+      dy = _dy;
     } else if (operation === "scale") {
       if (directions.includes("left")) {
-        dx += event.detail.dx;
-        dw -= event.detail.dx;
+        dx = _dx;
+        dw = -_dx;
       }
       if (directions.includes("top")) {
-        dy += event.detail.dy;
-        dh -= event.detail.dy;
+        dy = _dy;
+        dh = -_dy;
       }
       if (directions.includes("right")) {
-        dw += event.detail.dx;
+        dw = _dx;
       }
       if (directions.includes("bottom")) {
-        dh += event.detail.dy;
+        dh = _dy;
       }
     }
   }
@@ -75,6 +92,8 @@
     operation = "";
   }
   function handlePanStart(event) {
+    startX = event.detail.x;
+    startY = event.detail.y;
     if (event.detail.target === event.currentTarget) {
       return (operation = "move");
     }
@@ -83,6 +102,12 @@
   }
   onMount(render);
 </script>
+
+<style>
+  .operation {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+</style>
 
 <svelte:options immutable={true} />
 <div
@@ -96,7 +121,8 @@
     on:panmove={handlePanMove}
     on:panend={handlePanEnd}
     class="absolute w-full h-full cursor-grab"
-    class:cursor-grabbing={operation === 'move'}>
+    class:cursor-grabbing={operation === 'move'}
+    class:operation>
     <div
       data-direction="left"
       class="absolute left-0 top-0 h-full w-1 border-l border-dashed
@@ -115,24 +141,20 @@
       border-gray-600 cursor-ew-resize" />
     <div
       data-direction="left-top"
-      style="left: -0.2rem; top: -0.2rem;"
-      class="absolute left-0 top-0 w-2 h-2 bg-blue-300 rounded-full
-      cursor-nwse-resize" />
+      class="absolute left-0 top-0 w-5 h-5 bg-blue-300 rounded-full
+      cursor-nwse-resize transform -translate-x-1/2 -translate-y-1/2 md:scale-50" />
     <div
       data-direction="right-top"
-      style="right: -0.2rem; top: -0.2rem;"
-      class="absolute right-0 top-0 w-2 h-2 bg-blue-300 rounded-full
-      cursor-nesw-resize" />
+      class="absolute right-0 top-0 w-5 h-5 bg-blue-300 rounded-full
+      cursor-nesw-resize transform translate-x-1/2 -translate-y-1/2 md:scale-50" />
     <div
       data-direction="left-bottom"
-      style="left: -0.2rem; bottom: -0.2rem;"
-      class="absolute left-0 bottom-0 w-2 h-2 bg-blue-300 rounded-full
-      cursor-nesw-resize" />
+      class="absolute left-0 bottom-0 w-5 h-5 bg-blue-300 rounded-full
+      cursor-nesw-resize transform -translate-x-1/2 translate-y-1/2 md:scale-50" />
     <div
       data-direction="right-bottom"
-      style="right: -0.2rem; bottom: -0.2rem;"
-      class="absolute right-0 bottom-0 w-2 h-2 bg-blue-300 rounded-full
-      cursor-nwse-resize" />
+      class="absolute right-0 bottom-0 w-5 h-5 bg-blue-300 rounded-full
+      cursor-nwse-resize transform translate-x-1/2 translate-y-1/2 md:scale-50" />
   </div>
   <canvas class="w-full h-full" bind:this={canvas} />
 </div>

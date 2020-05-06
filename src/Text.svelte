@@ -8,7 +8,10 @@
   export let x;
   export let y;
   export let fontFamily;
+  export let pageScale = 1;
   const dispatch = createEventDispatcher();
+  let startX;
+  let startY;
   let editable;
   let _size = size;
   let _lineHeight = lineHeight;
@@ -17,8 +20,8 @@
   let dy = 0;
   let operation = "";
   function handlePanMove(event) {
-    dx += event.detail.dx;
-    dy += event.detail.dy;
+    dx = (event.detail.x - startX) / pageScale;
+    dy = (event.detail.y - startY) / pageScale;
   }
 
   function handlePanEnd(event) {
@@ -34,6 +37,8 @@
     operation = "";
   }
   function handlePanStart(event) {
+    startX = event.detail.x;
+    startY = event.detail.y;
     operation = "move";
   }
   function onFocus() {
