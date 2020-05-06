@@ -257,7 +257,8 @@
           const scale = 400 / originWidth;
           addDrawing(originWidth, originHeight, path, scale);
           addingDrawing = false;
-        }} />
+        }}
+        on:cancel={() => (addingDrawing = false)} />
     </div>
   {/if}
   {#if pages.length}

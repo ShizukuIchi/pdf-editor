@@ -23,6 +23,9 @@
       path
     });
   }
+  function cancel() {
+    dispatch("cancel");
+  }
 </script>
 
 <div
@@ -31,12 +34,20 @@
   on:panstart={handlePanStart}
   on:panmove={handlePanMove}
   class="relative w-full h-full">
-  <button
-    on:click={finish}
-    class="absolute right-0 bottom-0 w-24 bg-blue-500 hover:bg-blue-700
-    text-white font-bold py-1 px-4 rounded m-4">
-    Done
-  </button>
+  <div class="absolute right-0 bottom-0 mr-4 mb-4 flex">
+    <button
+      on:click={cancel}
+      class=" w-24 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4
+      rounded mr-4">
+      Cancel
+    </button>
+    <button
+      on:click={finish}
+      class="w-24 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4
+      rounded">
+      Done
+    </button>
+  </div>
   <svg class="w-full h-full">
     <path
       stroke-width="5"
