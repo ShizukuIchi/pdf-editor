@@ -5,10 +5,12 @@
   let canvas;
   let width;
   let height;
-  let clientWidth = width;
-  $: if (clientWidth && width) {
+  let clientWidth;
+  let mounted;
+  $: if (mounted) {
+    console.log(`Page container size changed: ${clientWidth}`);
     dispatch("measure", {
-      scale: clientWidth / width
+      scale: canvas.clientWidth / width
     });
   }
   async function render() {
@@ -17,14 +19,23 @@
     const viewport = _page.getViewport({ scale: 1 });
     width = viewport.width;
     height = viewport.height;
-    _page.render({
+    await _page.render({
       canvasContext: context,
       viewport: viewport
+    }).promise;
+    mounted = true;
+    dispatch("measure", {
+      scale: canvas.clientWidth / width
     });
   }
   onMount(render);
 </script>
 
 <div bind:clientWidth>
-  <canvas bind:this={canvas} class="w-full" {width} {height} />
+  <canvas
+    bind:this={canvas}
+    class="max-w-full"
+    style="width: {width}px;"
+    {width}
+    {height} />
 </div>
