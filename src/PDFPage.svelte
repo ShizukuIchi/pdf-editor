@@ -8,6 +8,7 @@
   let clientWidth;
   let mounted;
   $: if (mounted) {
+    console.log(`Page container size changed: ${clientWidth}`);
     dispatch("measure", {
       scale: canvas.clientWidth / width
     });
