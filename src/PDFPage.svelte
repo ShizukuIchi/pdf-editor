@@ -5,11 +5,13 @@
   let canvas;
   let width;
   let height;
-  let clientWidth = width;
-  $: if (clientWidth && width) {
-    console.log(clientWidth, width);
+  let clientWidth;
+  let mounted;
+  $: if (mounted) {
+    console.log("Container size changed:", clientWidth);
+    console.log("Canvas size:", canvas.clientWidth);
     dispatch("measure", {
-      scale: clientWidth / width
+      scale: canvas.clientWidth / width
     });
   }
   async function render() {
@@ -18,13 +20,15 @@
     const viewport = _page.getViewport({ scale: 1 });
     width = viewport.width;
     height = viewport.height;
-    _page.render({
+    await _page.render({
       canvasContext: context,
       viewport: viewport
+    }).promise;
+    mounted = true;
+    console.log("First measure canvas size:", canvas.clientWidth);
+    dispatch("measure", {
+      scale: canvas.clientWidth / width
     });
-    setTimeout(() => {
-      console.log(canvas.clientWidth);
-    }, 1000);
   }
   onMount(render);
 </script>

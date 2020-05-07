@@ -1,6 +1,6 @@
 # PDF Editor
 
-No install. No server. ¯\_(ツ)\_/¯ https://pdf-editor.now.sh
+No install. No server. ¯\\\_(ツ)\_/¯ https://pdf-editor.now.sh
 
 ## How to use pdf-editor?
 
