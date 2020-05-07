@@ -7,6 +7,7 @@
   let height;
   let clientWidth = width;
   $: if (clientWidth && width) {
+    console.log(clientWidth, width);
     dispatch("measure", {
       scale: clientWidth / width
     });
@@ -21,10 +22,18 @@
       canvasContext: context,
       viewport: viewport
     });
+    setTimeout(() => {
+      console.log(canvas.clientWidth);
+    }, 1000);
   }
   onMount(render);
 </script>
 
 <div bind:clientWidth>
-  <canvas bind:this={canvas} class="w-full" {width} {height} />
+  <canvas
+    bind:this={canvas}
+    class="max-w-full"
+    style="width: {width}px;"
+    {width}
+    {height} />
 </div>
