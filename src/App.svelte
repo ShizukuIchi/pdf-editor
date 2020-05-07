@@ -18,8 +18,7 @@
   let pdfFile;
   let pdfName = "";
   let pages = [];
-  let pagesWidth = [];
-  let measures = [];
+  let pagesScale = [];
   let allObjects = [];
   let selectedPageIndex = -1;
   let saving = false;
@@ -60,8 +59,7 @@
         .fill()
         .map((_, i) => pdf.getPage(i + 1));
       allObjects = pages.map(() => []);
-      pagesWidth = Array(numPages).fill(1);
-      measures = Array(numPages).fill(1);
+      pagesScale = Array(numPages).fill(1);
     } catch (e) {
       console.log("Failed to add pdf.");
       throw e;
@@ -151,18 +149,15 @@
         : objects
     );
   }
-  function onMeasure(width, i) {
-    measures[i] = width;
+  function onMeasure(scale, i) {
+    pagesScale[i] = scale;
   }
   // FIXME: Should wait all objects finish their async work
   async function savePDF() {
     if (!pdfFile || saving || !pages.length) return;
     saving = true;
     try {
-      const scales = measures.map((width, index) => {
-        return pagesWidth[index] / width;
-      });
-      await save(pdfFile, allObjects, pdfName, scales);
+      await save(pdfFile, allObjects, pdfName, pagesScale);
     } catch (e) {
       console.log(e);
     } finally {
@@ -190,11 +185,13 @@
       on:change={onUploadImage} />
     <label
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3
-      md:px-4 rounded mr-4 cursor-pointer"
+      md:px-4 rounded mr-3 cursor-pointer md:mr-4"
       for="pdf">
       Choose PDF
     </label>
-    <div class="relative mr-4 flex h-8 bg-gray-400 rounded-sm overflow-hidden">
+    <div
+      class="relative mr-3 flex h-8 bg-gray-400 rounded-sm overflow-hidden
+      md:mr-4">
       <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
@@ -227,7 +224,7 @@
         <img src="add.svg" alt="An icon for create material" />
       </label> -->
     </div>
-    <div class="justify-center mr-4 w-full max-w-xs hidden md:flex">
+    <div class="justify-center mr-3 md:mr-4 w-full max-w-xs hidden md:flex">
       <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
       <input
         placeholder="Rename your PDF here"
@@ -238,10 +235,10 @@
     <button
       on:click={savePDF}
       class="w-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3
-      md:px-4 mr-4 rounded"
+      md:px-4 mr-3 md:mr-4 rounded"
       class:cursor-not-allowed={pages.length === 0 || saving || !pdfFile}
       class:bg-blue-700={pages.length === 0 || saving || !pdfFile}>
-      {saving ? 'Saving' : 'Saving'}
+      {saving ? 'Saving' : 'Save'}
     </button>
     <a href="https://github.com/ShizukuIchi/pdf-editor">
       <img
@@ -277,19 +274,18 @@
     <div class="w-full">
       {#each pages as page, pIndex (page)}
         <div
-          class="p-5 w-full flex flex-col items-center overflow-y-hidden"
+          class="p-5 w-full flex flex-col items-center overflow-hidden"
           on:mousedown={() => selectPage(pIndex)}
           on:touchstart={() => selectPage(pIndex)}>
           <div
             class="relative shadow-lg"
-            bind:clientWidth={pagesWidth[pIndex]}
             class:shadow-outline={pIndex === selectedPageIndex}>
             <PDFPage
-              on:measure={e => onMeasure(e.detail.width, pIndex)}
+              on:measure={e => onMeasure(e.detail.scale, pIndex)}
               {page} />
             <div
               class="absolute top-0 left-0 transform origin-top-left"
-              style="transform: scale({pagesWidth[pIndex] / measures[pIndex]});">
+              style="transform: scale({pagesScale[pIndex]});">
               {#each allObjects[pIndex] as object (object.id)}
                 {#if object.type === 'image'}
                   <Image
@@ -300,7 +296,7 @@
                     y={object.y}
                     width={object.width}
                     height={object.height}
-                    pageScale={pagesWidth[pIndex] / measures[pIndex]} />
+                    pageScale={pagesScale[pIndex]} />
                 {:else if object.type === 'text'}
                   <Text
                     on:update={e => updateObject(object.id, e.detail)}
@@ -310,7 +306,7 @@
                     size={object.size}
                     lineHeight={object.lineHeight}
                     fontFamily={object.fontFamily}
-                    pageScale={pagesWidth[pIndex] / measures[pIndex]} />
+                    pageScale={pagesScale[pIndex]} />
                 {:else if object.type === 'drawing'}
                   <Drawing
                     on:update={e => updateObject(object.id, e.detail)}
@@ -320,7 +316,7 @@
                     width={object.width}
                     originWidth={object.originWidth}
                     originHeight={object.originHeight}
-                    pageScale={pagesWidth[pIndex] / measures[pIndex]} />
+                    pageScale={pagesScale[pIndex]} />
                 {/if}
               {/each}
 

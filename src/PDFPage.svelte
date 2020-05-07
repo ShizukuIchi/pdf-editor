@@ -5,6 +5,12 @@
   let canvas;
   let width;
   let height;
+  let clientWidth = width;
+  $: if (clientWidth && width) {
+    dispatch("measure", {
+      scale: clientWidth / width
+    });
+  }
   async function render() {
     const _page = await page;
     const context = canvas.getContext("2d");
@@ -15,12 +21,10 @@
       canvasContext: context,
       viewport: viewport
     });
-    dispatch("measure", {
-      width,
-      height
-    });
   }
   onMount(render);
 </script>
 
-<canvas bind:this={canvas} class="w-full" {width} {height} />
+<div bind:clientWidth>
+  <canvas bind:this={canvas} class="w-full" {width} {height} />
+</div>
