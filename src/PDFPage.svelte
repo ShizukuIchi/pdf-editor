@@ -8,8 +8,6 @@
   let clientWidth;
   let mounted;
   $: if (mounted) {
-    console.log("Container size changed:", clientWidth);
-    console.log("Canvas size:", canvas.clientWidth);
     dispatch("measure", {
       scale: canvas.clientWidth / width
     });
@@ -25,7 +23,6 @@
       viewport: viewport
     }).promise;
     mounted = true;
-    console.log("First measure canvas size:", canvas.clientWidth);
     dispatch("measure", {
       scale: canvas.clientWidth / width
     });
