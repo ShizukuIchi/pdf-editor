@@ -10,7 +10,8 @@
   import {
     readAsArrayBuffer,
     readAsImage,
-    readAsPDF
+    readAsPDF,
+    readAsDataURL
   } from "./utils/asyncReader.js";
   import { ggID } from "./utils/helper.js";
   import { save } from "./utils/PDF.js";
@@ -46,7 +47,7 @@
       await addPDF(file);
       selectedPageIndex = 0;
     } catch (e) {
-      selectedPageIndex = -1;
+      console.log(e);
     }
   }
   async function addPDF(file) {
@@ -74,7 +75,9 @@
   }
   async function addImage(file) {
     try {
-      const img = await readAsImage(file);
+      // get dataURL to prevent canvas from tainted
+      const url = await readAsDataURL(file);
+      const img = await readAsImage(url);
       const id = genID();
       const { width, height } = img;
       const object = {
@@ -213,7 +216,8 @@
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
         cursor-pointer"
         on:click={onAddDrawing}
-        class:cursor-not-allowed={selectedPageIndex < 0}>
+        class:cursor-not-allowed={selectedPageIndex < 0}
+        class:bg-gray-500={selectedPageIndex < 0}>
         <img src="gesture.svg" alt="An icon for adding drawing" />
       </label>
       <!-- coming soon -->
@@ -285,7 +289,7 @@
               {page} />
             <div
               class="absolute top-0 left-0 transform origin-top-left"
-              style="transform: scale({pagesScale[pIndex]});">
+              style="transform: scale({pagesScale[pIndex]}); touch-action: none;">
               {#each allObjects[pIndex] as object (object.id)}
                 {#if object.type === 'image'}
                   <Image

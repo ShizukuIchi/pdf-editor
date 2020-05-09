@@ -1,30 +1,39 @@
 export function readAsArrayBuffer(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.readAsArrayBuffer(file);
-    reader.onload = () => {
-      resolve(reader.result);
-    };
+    reader.onload = () => resolve(reader.result);
     reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
   });
 }
 
-export function readAsImage(file) {
+export function readAsImage(src) {
   return new Promise((resolve, reject) => {
-    if (!['image/jpeg', 'image/png', 'image/svg+xml'].includes(file.type)) {
-      reject(`Image type '${file.type}' is not supported.`);
-    }
     const img = new Image();
-    const objectUrl = URL.createObjectURL(file);
-    img.onload = () => {
-      resolve(img);
-    };
+    img.onload = () => resolve(img);
     img.onerror = reject;
-    img.src = objectUrl;
+    if (src instanceof Blob) {
+      const url = window.URL.createObjectURL(src);
+      img.src = url;
+    } else {
+      img.src = src;
+    }
+  });
+}
+
+export function readAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
 }
 
 export async function readAsPDF(file) {
   const pdfjsLib = await window.getAsset('pdfjsLib');
-  return pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
+  // Safari possibly get webkitblobresource error 1 when using origin file blob
+  const blob = new Blob([file]);
+  const url = window.URL.createObjectURL(blob);
+  return pdfjsLib.getDocument(url).promise;
 }
