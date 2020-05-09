@@ -100,12 +100,12 @@
     class:operation>
     <div
       data-direction="left-top"
-      class="absolute left-0 top-0 w-5 h-5 bg-green-400 rounded-full
-      cursor-nwse-resize transform -translate-x-1/2 -translate-y-1/2 md:scale-50" />
+      class="absolute left-0 top-0 w-10 h-10 bg-green-400 rounded-full
+      cursor-nwse-resize transform -translate-x-1/2 -translate-y-1/2 md:scale-25" />
     <div
       data-direction="right-bottom"
-      class="absolute right-0 bottom-0 w-5 h-5 bg-green-400 rounded-full
-      cursor-nwse-resize transform translate-x-1/2 translate-y-1/2 md:scale-50" />
+      class="absolute right-0 bottom-0 w-10 h-10 bg-green-400 rounded-full
+      cursor-nwse-resize transform translate-x-1/2 translate-y-1/2 md:scale-25" />
   </div>
   <svg bind:this={svg} width="100%" height="100%">
     <path

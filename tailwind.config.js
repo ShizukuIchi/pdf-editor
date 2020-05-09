@@ -16,9 +16,19 @@ module.exports = {
       grab: 'grab',
       grabbing: 'grabbing',
     },
+    scale: {
+      '0': '0',
+      '25': '.25',
+      '50': '.5',
+      '75': '.75',
+      '90': '.9',
+      '100': '1',
+      '125': '1.25',
+      '150': '1.5',
+    },
   },
   variants: {
-    margin: ['responsive', 'last', 'hover', 'focus'],
+    margin: ['responsive', 'hover', 'focus'],
   },
   plugins: [],
 };

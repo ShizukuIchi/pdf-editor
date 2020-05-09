@@ -36,7 +36,7 @@
       width: width * scale,
       height: height * scale
     });
-    if (file.type === "image/svg+xml") {
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
       canvas.toBlob(blob => {
         dispatch("update", {
           file: blob
@@ -107,6 +107,12 @@
   .operation {
     background-color: rgba(0, 0, 0, 0.3);
   }
+  .resize-border {
+    @apply absolute border-dashed border-gray-600;
+  }
+  .resize-corner {
+    @apply absolute w-10 h-10 bg-blue-300 rounded-full;
+  }
 </style>
 
 <svelte:options immutable={true} />
@@ -125,36 +131,32 @@
     class:operation>
     <div
       data-direction="left"
-      class="absolute left-0 top-0 h-full w-1 border-l border-dashed
-      border-gray-600 cursor-ew-resize" />
+      class="resize-border h-full w-1 left-0 top-0 border-l cursor-ew-resize" />
     <div
       data-direction="top"
-      class="absolute left-0 top-0 w-full h-1 border-t border-dashed
-      border-gray-600 cursor-ns-resize" />
+      class="resize-border w-full h-1 left-0 top-0 border-t cursor-ns-resize" />
     <div
       data-direction="bottom"
-      class="absolute left-0 bottom-0 w-full h-1 border-b border-dashed
-      border-gray-600 cursor-ns-resize" />
+      class="resize-border w-full h-1 left-0 bottom-0 border-b cursor-ns-resize" />
     <div
       data-direction="right"
-      class="absolute right-0 top-0 h-full w-1 border-r border-dashed
-      border-gray-600 cursor-ew-resize" />
+      class="resize-border h-full w-1 right-0 top-0 border-r cursor-ew-resize" />
     <div
       data-direction="left-top"
-      class="absolute left-0 top-0 w-5 h-5 bg-blue-300 rounded-full
-      cursor-nwse-resize transform -translate-x-1/2 -translate-y-1/2 md:scale-50" />
+      class="resize-corner left-0 top-0 cursor-nwse-resize transform
+      -translate-x-1/2 -translate-y-1/2 md:scale-25" />
     <div
       data-direction="right-top"
-      class="absolute right-0 top-0 w-5 h-5 bg-blue-300 rounded-full
-      cursor-nesw-resize transform translate-x-1/2 -translate-y-1/2 md:scale-50" />
+      class="resize-corner right-0 top-0 cursor-nesw-resize transform
+      translate-x-1/2 -translate-y-1/2 md:scale-25" />
     <div
       data-direction="left-bottom"
-      class="absolute left-0 bottom-0 w-5 h-5 bg-blue-300 rounded-full
-      cursor-nesw-resize transform -translate-x-1/2 translate-y-1/2 md:scale-50" />
+      class="resize-corner left-0 bottom-0 cursor-nesw-resize transform
+      -translate-x-1/2 translate-y-1/2 md:scale-25" />
     <div
       data-direction="right-bottom"
-      class="absolute right-0 bottom-0 w-5 h-5 bg-blue-300 rounded-full
-      cursor-nwse-resize transform translate-x-1/2 translate-y-1/2 md:scale-50" />
+      class="resize-corner right-0 bottom-0 cursor-nwse-resize transform
+      translate-x-1/2 translate-y-1/2 md:scale-25" />
   </div>
   <canvas class="w-full h-full" bind:this={canvas} />
 </div>
