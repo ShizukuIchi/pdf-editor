@@ -11,7 +11,7 @@ const scripts = [
     name: 'download',
     src: 'https://unpkg.com/downloadjs@1.4.7',
   },
-  { name: 'makeFont', src: '/make-font.js' },
+  { name: 'makeTextPDF', src: '/makeTextPDF.js' },
 ];
 
 export default async function prepareAssets() {
@@ -32,8 +32,15 @@ export default async function prepareAssets() {
     });
   });
   // prepare font
-  assets['CK'] = fetch('/CKs.ttf').then((r) => r.arrayBuffer());
-  const font = new FontFace('CK', await window.getAsset('CK'));
+  // 標楷體 9.9MB
+  // assets['defaultFont'] = fetch('/CKs.ttf').then((r) => r.arrayBuffer());
+  assets['defaultFont'] = fetch('/NotoSansTC-Regular.woff2').then((r) =>
+    r.arrayBuffer()
+  );
+  const font = new FontFace(
+    'default font',
+    await window.getAsset('defaultFont')
+  );
   font.display = 'swap';
   await font.load();
   document.fonts.add(font);

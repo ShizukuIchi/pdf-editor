@@ -4,8 +4,8 @@ import { noop } from './helper.js';
 export async function save(pdfFile, objects, name) {
   const PDFLib = await window.getAsset('PDFLib');
   const download = await window.getAsset('download');
-  const makeFont = await window.getAsset('makeFont');
-  const CK = await window.getAsset('CK');
+  const makeFont = await window.getAsset('makeTextPDF');
+  const defaultFont = await window.getAsset('defaultFont');
   let pdfDoc;
   try {
     pdfDoc = await PDFLib.PDFDocument.load(await readAsArrayBuffer(pdfFile));
@@ -43,7 +43,15 @@ export async function save(pdfFile, objects, name) {
         let { x, y, lines, lineHeight, size } = object;
 
         const [textPage] = await pdfDoc.embedPdf(
-          await makeFont(lines, size, lineHeight, pageWidth, pageHeight, CK)
+          await makeFont({
+            lines,
+            fontSize: size,
+            lineHeight,
+            width: pageWidth,
+            height: pageHeight,
+            font: defaultFont,
+            dy: (size * lineHeight - size) / 2,
+          })
         );
         return () =>
           page.drawPage(textPage, {

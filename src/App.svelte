@@ -110,7 +110,7 @@
       type: "text",
       size: 16,
       lineHeight: 1.4,
-      fontFamily: "CK",
+      fontFamily: "default font",
       x: 100,
       y: 0
     };
