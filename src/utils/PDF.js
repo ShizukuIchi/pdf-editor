@@ -1,11 +1,11 @@
 import { readAsArrayBuffer } from './asyncReader.js';
+import { fetchFont } from './prepareAssets';
 import { noop } from './helper.js';
 
 export async function save(pdfFile, objects, name) {
   const PDFLib = await window.getAsset('PDFLib');
   const download = await window.getAsset('download');
-  const makeFont = await window.getAsset('makeTextPDF');
-  const defaultFont = await window.getAsset('defaultFont');
+  const makeTextPDF = await window.getAsset('makeTextPDF');
   let pdfDoc;
   try {
     pdfDoc = await PDFLib.PDFDocument.load(await readAsArrayBuffer(pdfFile));
@@ -40,17 +40,17 @@ export async function save(pdfFile, objects, name) {
           return noop;
         }
       } else if (object.type === 'text') {
-        let { x, y, lines, lineHeight, size } = object;
-
+        let { x, y, lines, lineHeight, size, fontFamily } = object;
+        const font = await fetchFont(fontFamily);
         const [textPage] = await pdfDoc.embedPdf(
-          await makeFont({
+          await makeTextPDF({
             lines,
             fontSize: size,
             lineHeight,
             width: pageWidth,
             height: pageHeight,
-            font: defaultFont,
-            dy: (size * lineHeight - size) / 2,
+            font: font.buffer,
+            dy: font.correction(size, lineHeight),
           })
         );
         return () =>

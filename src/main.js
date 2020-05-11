@@ -1,7 +1,7 @@
 import App from './App.svelte';
-import prepareAssets from './utils/prepareAssets.js'
+import prepareAssets from './utils/prepareAssets.js';
 
-prepareAssets()
+prepareAssets();
 const app = new App({
   target: document.body,
 });

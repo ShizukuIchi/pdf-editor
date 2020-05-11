@@ -7,6 +7,7 @@
   import Text from "./Text.svelte";
   import Drawing from "./Drawing.svelte";
   import DrawingCanvas from "./DrawingCanvas.svelte";
+  import { fetchFont } from "./utils/prepareAssets.js";
   import {
     readAsArrayBuffer,
     readAsImage,
@@ -21,6 +22,8 @@
   let pages = [];
   let pagesScale = [];
   let allObjects = [];
+  let currentFont = "Noto Sans TC";
+  let focusId = null;
   let selectedPageIndex = -1;
   let saving = false;
   let addingDrawing = false;
@@ -31,6 +34,7 @@
       const pdfBlob = await res.blob();
       await addPDF(pdfBlob);
       selectedPageIndex = 0;
+      fetchFont(currentFont);
       // const imgBlob = await (await fetch("/test.jpg")).blob();
       // addImage(imgBlob);
       // addTextField("測試 New Text Field!");
@@ -104,13 +108,14 @@
   }
   function addTextField(text = "新文字方塊 New Text Field") {
     const id = genID();
+    fetchFont(currentFont);
     const object = {
       id,
       text,
       type: "text",
       size: 16,
       lineHeight: 1.4,
-      fontFamily: "default font",
+      fontFamily: currentFont,
       x: 100,
       y: 0
     };

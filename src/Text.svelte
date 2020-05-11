@@ -1,6 +1,8 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
+  import Toolbar from "./Toolbar.svelte";
   import { pannable } from "./utils/pannable.js";
+  import { tapout } from "./utils/tapout.js";
   import { timeout } from "./utils/helper.js";
   export let size;
   export let text;
@@ -45,16 +47,12 @@
     operation = "edit";
   }
   async function onBlur() {
+    if (operation !== "edit" || operation === "tool") return;
     sanitize();
     dispatch("update", {
       lines: extractLines()
     });
-    // Give toolbar a chance to focus
-    operation = "edited";
-    await timeout();
-    if (operation === "edited") {
-      operation = "";
-    }
+    operation = "";
   }
   async function onPaste(e) {
     // get text only
@@ -99,20 +97,16 @@
     }
   }
   function onFocusTool() {
-    operation = "edit";
+    operation = "tool";
   }
   async function onBlurTool() {
+    if (operation !== "tool" || operation === "edit") return;
     dispatch("update", {
       lines: extractLines(),
       lineHeight: _lineHeight,
       size: _size
     });
-    operation = "edited";
-    // Give text field a chance to focus
-    await timeout();
-    if (operation === "edited") {
-      operation = "";
-    }
+    operation = "";
   }
   function sanitize() {
     let weirdNode;
@@ -144,40 +138,49 @@
     lines.push(lineText);
     return lines;
   }
-  // image version text generator
-  // function drawText() {
-  //   const height = editable.offsetHeight;
-  //   const width = editable.offsetWidth;
-  //   const fontHeight = _size * _lineHeight;
-  //   // prevent crop of last line
-  //   canvas.height = height + 10;
-  //   canvas.width = width;
-  //   const ctx = canvas.getContext("2d");
-  //   ctx.font = `${_size}px "${_fontFamily}"`;
-  //   const nodes = editable.childNodes;
-  //   // FIXME: This fix should rely on ascender and descender of the font instead.
-  //   let dy = fontHeight - (fontHeight - _size) / 2 - _size / 5;
-  //   let lineText = "";
-  //   for (let index = 0; index < nodes.length; index++) {
-  //     const node = nodes[index];
-  //     if (node.nodeName === "BR") {
-  //       ctx.fillText(lineText, 0, dy);
-  //       dy += fontHeight;
-  //       lineText = "";
-  //     } else {
-  //       // use textContext to trim strings like &npsp;
-  //       lineText += node.textContent;
-  //     }
-  //   }
-  //   if (lineText) {
-  //     ctx.fillText(lineText, 0, dy);
-  //   }
-  // }
   onMount(render);
 </script>
 
+<style>
+  .editing {
+    @apply pointer-events-none border-gray-800 border-dashed;
+  }
+</style>
+
 <svelte:options immutable={true} />
+{#if operation}
+  <Toolbar>
+    <div
+      use:tapout
+      on:tapout={onBlurTool}
+      on:mousedown={onFocusTool}
+      on:touchstart={onFocusTool}
+      class=" h-full flex justify-center items-center bg-gray-200 border-b
+      border-gray-300">
+      <div class="mr-1 flex items-center">
+        <img src="/line_height.svg" class="w-4 mr-1" alt="Line height" />
+        <input
+          type="number"
+          min="1"
+          step="0.1"
+          class="text-sm w-10 text-center flex-shrink-0"
+          bind:value={_lineHeight} />
+      </div>
+      <div class="flex">
+        <img src="/text.svg" class="w-4 mr-1" alt="Font size" />
+        <input
+          type="number"
+          min="12"
+          step="1"
+          class="text-sm w-10 text-center"
+          bind:value={_size} />
+      </div>
+    </div>
+  </Toolbar>
+{/if}
 <div
+  use:tapout
+  on:tapout={onBlur}
   class="absolute left-0 top-0 select-none"
   style="transform: translate({x + dx}px, {y + dy}px);">
   <div
@@ -185,42 +188,14 @@
     on:panstart={handlePanStart}
     on:panmove={handlePanMove}
     on:panend={handlePanEnd}
-    class="absolute w-full h-full cursor-grab border {operation === 'edit' ? 'border-dotted' : 'border-dashed'}
-    border-gray-600"
+    class="absolute w-full h-full cursor-grab border border-dotted
+    border-gray-500"
     class:cursor-grab={!operation}
     class:cursor-grabbing={operation === 'move'}
-    class:pointer-events-none={['edit', 'edited'].includes(operation)} />
-  <!-- 4.25rem: When text is short and container is short, this element shrink. The number adjustment elements don't take space in no reason. -->
-  <div
-    class="absolute top-0 p-1 transform -translate-x-full bg-gray-400 rounded-sm"
-    class:hidden={!['edit', 'edited'].includes(operation)}
-    style="left: -10px; min-width: 4.25rem;">
-    <div class="mb-1 flex items-center">
-      <img src="/line_height.svg" class="w-4 mr-1" alt="Line height" />
-      <input
-        type="number"
-        min="1"
-        step="0.1"
-        on:focus={onFocusTool}
-        on:blur={onBlurTool}
-        class="text-sm w-10 text-center flex-shrink-0"
-        bind:value={_lineHeight} />
-    </div>
-    <div class="flex">
-      <img src="/text.svg" class="w-4 mr-1" alt="Font size" />
-      <input
-        type="number"
-        min="9"
-        on:focus={onFocusTool}
-        on:blur={onBlurTool}
-        class="text-sm w-10 text-center"
-        bind:value={_size} />
-    </div>
-  </div>
+    class:editing={['edit', 'tool'].includes(operation)} />
   <div
     bind:this={editable}
     on:focus={onFocus}
-    on:blur={onBlur}
     on:keydown={onKeydown}
     on:paste|preventDefault={onPaste}
     contenteditable="true"

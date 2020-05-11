@@ -1,3 +1,5 @@
+import Fonts from './fontConfig.js';
+
 const scripts = [
   {
     name: 'pdfjsLib',
@@ -14,9 +16,10 @@ const scripts = [
   { name: 'makeTextPDF', src: '/makeTextPDF.js' },
 ];
 
-export default async function prepareAssets() {
-  const assets = {};
-  window.getAsset = (scriptName) => assets[scriptName];
+const assets = {};
+window.getAsset = (scriptName) => assets[scriptName];
+
+export default function prepareAssets() {
   // prepare scripts
   scripts.forEach(({ name, src }) => {
     assets[name] = new Promise((resolve, reject) => {
@@ -31,17 +34,22 @@ export default async function prepareAssets() {
       document.body.appendChild(script);
     });
   });
-  // prepare font
-  // 標楷體 9.9MB
-  // assets['defaultFont'] = fetch('/CKs.ttf').then((r) => r.arrayBuffer());
-  assets['defaultFont'] = fetch('/NotoSansTC-Regular.woff2').then((r) =>
-    r.arrayBuffer()
-  );
-  const font = new FontFace(
-    'default font',
-    await window.getAsset('defaultFont')
-  );
-  font.display = 'swap';
-  await font.load();
-  document.fonts.add(font);
+}
+
+const fonts = {};
+export function fetchFont(name) {
+  if (fonts[name]) return fonts[name];
+  const font = Fonts[name];
+  if (!font) throw new Error(`Font '${name}' not exists.`);
+  fonts[name] = fetch(font.src)
+    .then((r) => r.arrayBuffer())
+    .then((fontBuffer) => {
+      const fontFace = new FontFace(name, fontBuffer);
+      fontFace.display = 'swap';
+      fontFace.load().then(() => document.fonts.add(fontFace));
+      return {
+        ...font,
+        buffer: fontBuffer,
+      };
+    });
 }

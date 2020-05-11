@@ -1,5 +1,5 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount, onDestroy, createEventDispatcher } from "svelte";
   export let page;
   const dispatch = createEventDispatcher();
   let canvas;
@@ -7,8 +7,7 @@
   let height;
   let clientWidth;
   let mounted;
-  $: if (mounted) {
-    console.log(`Page container size changed: ${clientWidth}`);
+  function measure() {
     dispatch("measure", {
       scale: canvas.clientWidth / width
     });
@@ -23,12 +22,13 @@
       canvasContext: context,
       viewport: viewport
     }).promise;
-    mounted = true;
-    dispatch("measure", {
-      scale: canvas.clientWidth / width
-    });
+    measure();
+    window.addEventListener("resize", measure);
   }
   onMount(render);
+  onDestroy(() => {
+    window.removeEventListener("resize", measure);
+  });
 </script>
 
 <div bind:clientWidth>
