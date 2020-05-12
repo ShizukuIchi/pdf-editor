@@ -116,7 +116,7 @@
       size: 16,
       lineHeight: 1.4,
       fontFamily: currentFont,
-      x: 100,
+      x: 0,
       y: 0
     };
     allObjects = allObjects.map((objects, pIndex) =>
@@ -144,6 +144,11 @@
     allObjects = allObjects.map((objects, pIndex) =>
       pIndex === selectedPageIndex ? [...objects, object] : objects
     );
+  }
+  function selectFontFamily(event) {
+    const name = event.detail.name;
+    fetchFont(name);
+    currentFont = name;
   }
   function selectPage(index) {
     selectedPageIndex = index;
@@ -309,6 +314,7 @@
                 {:else if object.type === 'text'}
                   <Text
                     on:update={e => updateObject(object.id, e.detail)}
+                    on:selectFont={selectFontFamily}
                     text={object.text}
                     x={object.x}
                     y={object.y}

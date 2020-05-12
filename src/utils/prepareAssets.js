@@ -48,21 +48,14 @@ const fonts = {
   },
   'Times-Roman': {
     correction(size, lineHeight) {
-      return (size * lineHeight - size) / 2 + size / 6;
+      return (size * lineHeight - size) / 2 + size / 7;
     },
   },
 };
 // Available fonts
-const Fonts = {
+export const Fonts = {
   ...fonts,
-  'Noto Sans TC': {
-    // 1.4 MB
-    src: '/NotoSansTC-Regular.woff2',
-    correction(size, lineHeight) {
-      return (size * lineHeight - size) / 2 - size / 4;
-    },
-  },
-  CK: {
+  標楷體: {
     src: '/CK.ttf', // 9.9 MB
     correction(size, lineHeight) {
       return (size * lineHeight - size) / 2;
