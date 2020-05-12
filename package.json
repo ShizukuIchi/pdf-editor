@@ -1,6 +1,8 @@
 {
-  "name": "svelte-app",
+  "name": "pdf-editor",
   "version": "1.0.0",
+  "author": "ShizukuIchi <shizukuichi@gmail.com>",
+  "homepage": "https://pdf-editor.now.sh",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -9,7 +11,6 @@
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^2.1.2",
     "@rollup/plugin-commonjs": "^11.0.0",
-    "@rollup/plugin-json": "^4.0.3",
     "@rollup/plugin-node-resolve": "^7.0.0",
     "autoprefixer": "^9.7.6",
     "open": "^7.0.3",
