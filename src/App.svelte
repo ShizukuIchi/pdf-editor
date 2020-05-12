@@ -22,7 +22,7 @@
   let pages = [];
   let pagesScale = [];
   let allObjects = [];
-  let currentFont = "Noto Sans TC";
+  let currentFont = "Times-Roman";
   let focusId = null;
   let selectedPageIndex = -1;
   let saving = false;
@@ -37,7 +37,7 @@
       fetchFont(currentFont);
       // const imgBlob = await (await fetch("/test.jpg")).blob();
       // addImage(imgBlob);
-      // addTextField("測試 New Text Field!");
+      // addTextField("測試!");
       // addDrawing(200, 100, "M30,30 L100,50 L50,70", 0.5);
     } catch (e) {
       console.log(e);
@@ -106,7 +106,7 @@
       addTextField();
     }
   }
-  function addTextField(text = "新文字方塊 New Text Field") {
+  function addTextField(text = "New Text Field") {
     const id = genID();
     fetchFont(currentFont);
     const object = {

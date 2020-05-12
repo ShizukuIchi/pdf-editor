@@ -1,5 +1,3 @@
-import Fonts from './fontConfig.js';
-
 const scripts = [
   {
     name: 'pdfjsLib',
@@ -36,7 +34,42 @@ export default function prepareAssets() {
   });
 }
 
-const fonts = {};
+// out of the box fonts
+const fonts = {
+  Courier: {
+    correction(size, lineHeight) {
+      return (size * lineHeight - size) / 2 + size / 6;
+    },
+  },
+  Helvetica: {
+    correction(size, lineHeight) {
+      return (size * lineHeight - size) / 2 + size / 10;
+    },
+  },
+  'Times-Roman': {
+    correction(size, lineHeight) {
+      return (size * lineHeight - size) / 2 + size / 6;
+    },
+  },
+};
+// Available fonts
+const Fonts = {
+  ...fonts,
+  'Noto Sans TC': {
+    // 1.4 MB
+    src: '/NotoSansTC-Regular.woff2',
+    correction(size, lineHeight) {
+      return (size * lineHeight - size) / 2 - size / 4;
+    },
+  },
+  CK: {
+    src: '/CK.ttf', // 9.9 MB
+    correction(size, lineHeight) {
+      return (size * lineHeight - size) / 2;
+    },
+  },
+};
+
 export function fetchFont(name) {
   if (fonts[name]) return fonts[name];
   const font = Fonts[name];

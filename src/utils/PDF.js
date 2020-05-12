@@ -49,7 +49,7 @@ export async function save(pdfFile, objects, name) {
             lineHeight,
             width: pageWidth,
             height: pageHeight,
-            font: font.buffer,
+            font: font.buffer || fontFamily, // built-in font family
             dy: font.correction(size, lineHeight),
           })
         );
