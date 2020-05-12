@@ -1,3 +1,4 @@
+const autoprefixer = require('autoprefixer');
 const purgecss = require('@fullhuman/postcss-purgecss')({
   content: ['./src/**/*.svelte'],
 
@@ -16,6 +17,7 @@ const production = !process.env.ROLLUP_WATCH;
 module.exports = {
   plugins: [
     require('tailwindcss'),
-    ...(production ? [require('autoprefixer'), purgecss] : []),
+    autoprefixer,
+    ...(production ? [purgecss] : []),
   ],
 };

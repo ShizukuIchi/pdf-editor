@@ -4,6 +4,7 @@
   import { pannable } from "./utils/pannable.js";
   import { tapout } from "./utils/tapout.js";
   import { timeout } from "./utils/helper.js";
+  import { Fonts } from "./utils/prepareAssets.js";
   export let size;
   export let text;
   export let lineHeight;
@@ -11,6 +12,7 @@
   export let y;
   export let fontFamily;
   export let pageScale = 1;
+  const Families = Object.keys(Fonts);
   const dispatch = createEventDispatcher();
   let startX;
   let startY;
@@ -104,7 +106,8 @@
     dispatch("update", {
       lines: extractLines(),
       lineHeight: _lineHeight,
-      size: _size
+      size: _size,
+      fontFamily: _fontFamily
     });
     operation = "";
   }
@@ -117,6 +120,11 @@
     ) {
       editable.removeChild(weirdNode);
     }
+  }
+  function onChangeFont() {
+    dispatch("selectFont", {
+      name: _fontFamily
+    });
   }
   function render() {
     editable.innerHTML = text;
@@ -145,6 +153,10 @@
   .editing {
     @apply pointer-events-none border-gray-800 border-dashed;
   }
+  .font-family {
+    height: 1.6rem;
+    @apply block appearance-none w-full bg-white pl-1 pr-8 rounded-sm shadow-xs leading-tight text-sm;
+  }
 </style>
 
 <svelte:options immutable={true} />
@@ -155,25 +167,52 @@
       on:tapout={onBlurTool}
       on:mousedown={onFocusTool}
       on:touchstart={onFocusTool}
-      class=" h-full flex justify-center items-center bg-gray-200 border-b
-      border-gray-300">
-      <div class="mr-1 flex items-center">
-        <img src="/line_height.svg" class="w-4 mr-1" alt="Line height" />
+      class=" h-full flex justify-center items-center bg-gray-300 border-b
+      border-gray-400">
+      <div class="mr-2 flex items-center">
+        <img src="/line_height.svg" class="w-6 mr-2" alt="Line height" />
         <input
           type="number"
           min="1"
+          max="10"
           step="0.1"
-          class="text-sm w-10 text-center flex-shrink-0"
+          class="h-6 w-12 text-center flex-shrink-0 rounded-sm"
           bind:value={_lineHeight} />
       </div>
-      <div class="flex">
-        <img src="/text.svg" class="w-4 mr-1" alt="Font size" />
+      <div class="mr-2 flex items-center">
+        <img src="/text.svg" class="w-6 mr-2" alt="Font size" />
         <input
           type="number"
           min="12"
+          max="120"
           step="1"
-          class="text-sm w-10 text-center"
+          class="h-6 w-12 text-center flex-shrink-0 rounded-sm"
           bind:value={_size} />
+      </div>
+      <div class="mr-2 flex items-center">
+        <img src="/text-family.svg" class="w-4 mr-2" alt="Font family" />
+        <div class="relative w-40">
+          <select
+            bind:value={_fontFamily}
+            on:change={onChangeFont}
+            class="font-family">
+            {#each Families as family}
+              <option value={family}>{family}</option>
+            {/each}
+          </select>
+          <div
+            class="pointer-events-none absolute inset-y-0 right-0 flex
+            items-center px-2 text-gray-700">
+            <svg
+              class="fill-current h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20">
+              <path
+                d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757
+                6.586 4.343 8z" />
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
   </Toolbar>
@@ -201,6 +240,6 @@
     contenteditable="true"
     spellcheck="false"
     class="outline-none whitespace-no-wrap"
-    style="font-size: {_size}px; font-family: '{_fontFamily}'; line-height: {_lineHeight};
-    -webkit-user-select: text;" />
+    style="font-size: {_size}px; font-family: '{_fontFamily}', serif;
+    line-height: {_lineHeight}; -webkit-user-select: text;" />
 </div>
