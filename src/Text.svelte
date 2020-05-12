@@ -50,6 +50,7 @@
   }
   async function onBlur() {
     if (operation !== "edit" || operation === "tool") return;
+    editable.blur();
     sanitize();
     dispatch("update", {
       lines: extractLines()
@@ -154,8 +155,7 @@
     @apply pointer-events-none border-gray-800 border-dashed;
   }
   .font-family {
-    height: 1.6rem;
-    @apply block appearance-none w-full bg-white pl-1 pr-8 rounded-sm shadow-xs leading-tight text-sm;
+    @apply block appearance-none h-6 w-full bg-white pl-2 pr-8 rounded-sm leading-tight;
   }
 </style>
 
@@ -167,7 +167,7 @@
       on:tapout={onBlurTool}
       on:mousedown={onFocusTool}
       on:touchstart={onFocusTool}
-      class=" h-full flex justify-center items-center bg-gray-300 border-b
+      class="h-full flex justify-center items-center bg-gray-300 border-b
       border-gray-400">
       <div class="mr-2 flex items-center">
         <img src="/line_height.svg" class="w-6 mr-2" alt="Line height" />

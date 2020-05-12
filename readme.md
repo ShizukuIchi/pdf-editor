@@ -11,9 +11,10 @@ No install. No server. ¯\\\_(ツ)\_/¯ https://pdf-editor.now.sh
 
 ## Features
 
-- Resize or move everything.
+- Resize and move everything.
 - Add signatures.
 - Mobile friendly.
+- 支援中文（標楷體）。
 
 ---
 
