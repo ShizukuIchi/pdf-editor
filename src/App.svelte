@@ -269,7 +269,10 @@
       <DrawingCanvas
         on:finish={e => {
           const { originWidth, originHeight, path } = e.detail;
-          const scale = 400 / originWidth;
+          let scale = 1;
+          if (originWidth > 500) {
+            scale = 500 / originWidth;
+          }
           addDrawing(originWidth, originHeight, path, scale);
           addingDrawing = false;
         }}
