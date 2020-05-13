@@ -16,7 +16,6 @@
   } from "./utils/asyncReader.js";
   import { ggID } from "./utils/helper.js";
   import { save } from "./utils/PDF.js";
-  import onDrop from "./utils/onDrop.js";
   const genID = ggID();
   let pdfFile;
   let pdfName = "";
@@ -56,7 +55,6 @@
       console.log(e);
     }
   }
-  onDrop(window, onUploadPDF);
   async function addPDF(file) {
     try {
       const pdf = await readAsPDF(file);
@@ -182,6 +180,10 @@
   }
 </script>
 
+<svelte:window
+  on:dragenter|preventDefault|stopPropagation
+  on:dragover|preventDefault|stopPropagation
+  on:drop|preventDefault|stopPropagation={onUploadPDF} />
 <Tailwind />
 <main class="flex flex-col items-center py-16 bg-gray-100 min-h-screen">
   <div
