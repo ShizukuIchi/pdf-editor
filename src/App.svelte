@@ -181,9 +181,9 @@
 </script>
 
 <svelte:window
-  on:dragenter|preventDefault|stopPropagation
-  on:dragover|preventDefault|stopPropagation
-  on:drop|preventDefault|stopPropagation={onUploadPDF} />
+  on:dragenter|preventDefault
+  on:dragover|preventDefault
+  on:drop|preventDefault={onUploadPDF} />
 <Tailwind />
 <main class="flex flex-col items-center py-16 bg-gray-100 min-h-screen">
   <div
