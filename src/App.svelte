@@ -44,7 +44,8 @@
     }
   });
   async function onUploadPDF(e) {
-    const file = e.target.files[0];
+    const files = e.target.files || (e.dataTransfer && e.dataTransfer.files);
+    const file = files[0];
     if (!file || file.type !== "application/pdf") return;
     selectedPageIndex = -1;
     try {
@@ -179,6 +180,10 @@
   }
 </script>
 
+<svelte:window
+  on:dragenter|preventDefault
+  on:dragover|preventDefault
+  on:drop|preventDefault={onUploadPDF} />
 <Tailwind />
 <main class="flex flex-col items-center py-16 bg-gray-100 min-h-screen">
   <div
