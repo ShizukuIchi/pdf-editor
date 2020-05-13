@@ -16,6 +16,7 @@
   } from "./utils/asyncReader.js";
   import { ggID } from "./utils/helper.js";
   import { save } from "./utils/PDF.js";
+  import onDrop from "./utils/onDrop.js";
   const genID = ggID();
   let pdfFile;
   let pdfName = "";
@@ -44,7 +45,8 @@
     }
   });
   async function onUploadPDF(e) {
-    const file = e.target.files[0];
+    const files = e.target.files || (e.dataTransfer && e.dataTransfer.files);
+    const file = files[0];
     if (!file || file.type !== "application/pdf") return;
     selectedPageIndex = -1;
     try {
@@ -54,6 +56,7 @@
       console.log(e);
     }
   }
+  onDrop(window, onUploadPDF);
   async function addPDF(file) {
     try {
       const pdf = await readAsPDF(file);
