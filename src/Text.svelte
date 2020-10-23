@@ -195,7 +195,7 @@
       </div>
       <div class="mr-2 flex items-center">
         <img src="/text-family.svg" class="w-4 mr-2" alt="Font family" />
-        <div class="relative w-40">
+        <div class="relative w-32 md:w-40">
           <select
             bind:value={_fontFamily}
             on:change={onChangeFont}
@@ -217,6 +217,11 @@
             </svg>
           </div>
         </div>
+      </div>
+      <div
+        on:click={onDelete}
+        class="w-5 h-5 rounded-full bg-white cursor-pointer">
+        <img class="w-full h-full" src="/delete.svg" alt="delete object" />
       </div>
     </div>
   </Toolbar>
@@ -246,10 +251,4 @@
     class="outline-none whitespace-no-wrap"
     style="font-size: {_size}px; font-family: '{_fontFamily}', serif;
     line-height: {_lineHeight}; -webkit-user-select: text;" />
-  <div
-    on:click={onDelete}
-    class="absolute left-0 top-0 right-0 w-12 h-12 m-auto rounded-full bg-white
-    cursor-pointer transform -translate-y-1/2 md:scale-25">
-    <img class="w-full h-full" src="/delete.svg" alt="delete object" />
-  </div>
 </div>
