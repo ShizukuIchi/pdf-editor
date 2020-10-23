@@ -148,6 +148,9 @@
     lines.push(lineText);
     return lines;
   }
+  function onDelete() {
+    dispatch("delete");
+  }
   onMount(render);
 </script>
 
@@ -243,4 +246,10 @@
     class="outline-none whitespace-no-wrap"
     style="font-size: {_size}px; font-family: '{_fontFamily}', serif;
     line-height: {_lineHeight}; -webkit-user-select: text;" />
+  <div
+    on:click={onDelete}
+    class="absolute left-0 top-0 right-0 w-12 h-12 m-auto rounded-full bg-white
+    cursor-pointer transform -translate-y-1/2 md:scale-25">
+    <img class="w-full h-full" src="/delete.svg" alt="delete object" />
+  </div>
 </div>

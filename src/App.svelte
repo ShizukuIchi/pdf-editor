@@ -167,6 +167,13 @@
         : objects
     );
   }
+  function deleteObject(objectId) {
+    allObjects = allObjects.map((objects, pIndex) =>
+      pIndex == selectedPageIndex
+        ? objects.filter(object => object.id !== objectId)
+        : objects
+    );
+  }
   function onMeasure(scale, i) {
     pagesScale[i] = scale;
   }
@@ -239,13 +246,6 @@
         class:bg-gray-500={selectedPageIndex < 0}>
         <img src="gesture.svg" alt="An icon for adding drawing" />
       </label>
-      <!-- coming soon -->
-      <!-- <label
-        class="flex items-center justify-center h-full w-8 hover:bg-gray-500
-        cursor-pointer"
-        class:cursor-not-allowed={selectedPageIndex < 0}>
-        <img src="add.svg" alt="An icon for create material" />
-      </label> -->
     </div>
     <div class="justify-center mr-3 md:mr-4 w-full max-w-xs hidden md:flex">
       <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
@@ -316,6 +316,7 @@
                 {#if object.type === 'image'}
                   <Image
                     on:update={e => updateObject(object.id, e.detail)}
+                    on:delete={() => deleteObject(object.id)}
                     file={object.file}
                     payload={object.payload}
                     x={object.x}
@@ -326,6 +327,7 @@
                 {:else if object.type === 'text'}
                   <Text
                     on:update={e => updateObject(object.id, e.detail)}
+                    on:delete={() => deleteObject(object.id)}
                     on:selectFont={selectFontFamily}
                     text={object.text}
                     x={object.x}
@@ -337,6 +339,7 @@
                 {:else if object.type === 'drawing'}
                   <Drawing
                     on:update={e => updateObject(object.id, e.detail)}
+                    on:delete={() => deleteObject(object.id)}
                     path={object.path}
                     x={object.x}
                     y={object.y}

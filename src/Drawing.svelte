@@ -75,6 +75,9 @@
     operation = "scale";
     direction = event.detail.target.dataset.direction;
   }
+  function onDelete() {
+    dispatch("delete");
+  }
   onMount(render);
 </script>
 
@@ -106,6 +109,12 @@
       data-direction="right-bottom"
       class="absolute right-0 bottom-0 w-10 h-10 bg-green-400 rounded-full
       cursor-nwse-resize transform translate-x-1/2 translate-y-1/2 md:scale-25" />
+  </div>
+  <div
+    on:click={onDelete}
+    class="absolute left-0 top-0 right-0 w-12 h-12 m-auto rounded-full bg-white
+    cursor-pointer transform -translate-y-1/2 md:scale-25">
+    <img class="w-full h-full" src="/delete.svg" alt="delete object" />
   </div>
   <svg bind:this={svg} width="100%" height="100%">
     <path
