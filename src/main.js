@@ -1,7 +1,7 @@
 import App from './App.svelte';
-import prepareAssets from './utils/prepareAssets.js';
+import { getAsset } from './utils/prepareAssets.js';
 
-prepareAssets();
+getAsset('pdfjsLib');
 const app = new App({
   target: document.body,
 });

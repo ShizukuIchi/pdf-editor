@@ -1,11 +1,11 @@
 import { readAsArrayBuffer } from './asyncReader.js';
-import { fetchFont } from './prepareAssets';
+import { fetchFont, getAsset } from './prepareAssets';
 import { noop } from './helper.js';
 
 export async function save(pdfFile, objects, name) {
-  const PDFLib = await window.getAsset('PDFLib');
-  const download = await window.getAsset('download');
-  const makeTextPDF = await window.getAsset('makeTextPDF');
+  const PDFLib = await getAsset('PDFLib');
+  const download = await getAsset('download');
+  const makeTextPDF = await getAsset('makeTextPDF');
   let pdfDoc;
   try {
     pdfDoc = await PDFLib.PDFDocument.load(await readAsArrayBuffer(pdfFile));
@@ -40,22 +40,22 @@ export async function save(pdfFile, objects, name) {
           return noop;
         }
       } else if (object.type === 'text') {
-        let { x, y, lines, lineHeight, size, fontFamily } = object;
+        let { x, y, lines, lineHeight, size, fontFamily, width } = object;
         const font = await fetchFont(fontFamily);
         const [textPage] = await pdfDoc.embedPdf(
           await makeTextPDF({
             lines,
             fontSize: size,
             lineHeight,
-            width: pageWidth,
+            width,
             height: pageHeight,
             font: font.buffer || fontFamily, // built-in font family
             dy: font.correction(size, lineHeight),
-          })
+          }),
         );
         return () =>
           page.drawPage(textPage, {
-            width: pageWidth,
+            width,
             height: pageHeight,
             x,
             y: -y,
@@ -74,7 +74,7 @@ export async function save(pdfFile, objects, name) {
           page.pushOperators(
             pushGraphicsState(),
             setLineCap(LineCapStyle.Round),
-            setLineJoin(LineJoinStyle.Round)
+            setLineJoin(LineJoinStyle.Round),
           );
           page.drawSvgPath(path, {
             borderWidth: 5,

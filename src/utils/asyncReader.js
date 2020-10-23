@@ -1,3 +1,5 @@
+import { getAsset } from './prepareAssets';
+
 export function readAsArrayBuffer(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -31,7 +33,7 @@ export function readAsDataURL(file) {
 }
 
 export async function readAsPDF(file) {
-  const pdfjsLib = await window.getAsset('pdfjsLib');
+  const pdfjsLib = await getAsset('pdfjsLib');
   // Safari possibly get webkitblobresource error 1 when using origin file blob
   const blob = new Blob([file]);
   const url = window.URL.createObjectURL(blob);

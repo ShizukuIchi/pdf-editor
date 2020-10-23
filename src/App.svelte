@@ -7,7 +7,7 @@
   import Text from "./Text.svelte";
   import Drawing from "./Drawing.svelte";
   import DrawingCanvas from "./DrawingCanvas.svelte";
-  import { fetchFont } from "./utils/prepareAssets.js";
+  import prepareAssets, { fetchFont } from "./utils/prepareAssets.js";
   import {
     readAsArrayBuffer,
     readAsImage,
@@ -34,7 +34,10 @@
       const pdfBlob = await res.blob();
       await addPDF(pdfBlob);
       selectedPageIndex = 0;
-      fetchFont(currentFont);
+      setTimeout(() => {
+        fetchFont(currentFont);
+        prepareAssets();
+      }, 5000);
       // const imgBlob = await (await fetch("/test.jpg")).blob();
       // addImage(imgBlob);
       // addTextField("測試!");
@@ -115,6 +118,7 @@
       text,
       type: "text",
       size: 16,
+      width: 0, // calculate after editing
       lineHeight: 1.4,
       fontFamily: currentFont,
       x: 0,
@@ -202,8 +206,8 @@
       class="hidden"
       on:change={onUploadImage} />
     <label
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3
-      md:px-4 rounded mr-3 cursor-pointer md:mr-4"
+      class="whitespace-no-wrap bg-blue-500 hover:bg-blue-700 text-white
+      font-bold py-1 px-3 md:px-4 rounded mr-3 cursor-pointer md:mr-4"
       for="pdf">
       Choose PDF
     </label>

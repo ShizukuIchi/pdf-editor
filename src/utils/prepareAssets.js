@@ -15,23 +15,30 @@ const scripts = [
 ];
 
 const assets = {};
-window.getAsset = (scriptName) => assets[scriptName];
+export function getAsset(name) {
+  if (assets[name]) return assets[name];
+  const script = scripts.find((s) => s.name === name);
+  if (!script) throw new Error(`Script ${name} not exists.`);
+  return prepareAsset(script);
+}
+
+export function prepareAsset({ name, src }) {
+  if (assets[name]) return assets[name];
+  assets[name] = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = () => {
+      resolve(window[name]);
+      console.log(`${name} is loaded.`);
+    };
+    script.onerror = () => reject(`The script ${name} didn't load correctly.`);
+    document.body.appendChild(script);
+  });
+  return assets[name];
+}
 
 export default function prepareAssets() {
-  // prepare scripts
-  scripts.forEach(({ name, src }) => {
-    assets[name] = new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.onload = () => {
-        resolve(window[name]);
-        console.log(`${name} is loaded.`);
-      };
-      script.onerror = () =>
-        reject(`The script ${name} didn't load correctly.`);
-      document.body.appendChild(script);
-    });
-  });
+  scripts.forEach(prepareAsset);
 }
 
 // out of the box fonts
@@ -78,4 +85,5 @@ export function fetchFont(name) {
         buffer: fontBuffer,
       };
     });
+  return fonts[name];
 }

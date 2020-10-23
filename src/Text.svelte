@@ -53,7 +53,8 @@
     editable.blur();
     sanitize();
     dispatch("update", {
-      lines: extractLines()
+      lines: extractLines(),
+      width: editable.clientWidth
     });
     operation = "";
   }
