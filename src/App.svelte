@@ -118,7 +118,7 @@
       text,
       type: "text",
       size: 16,
-      width: 0, // calculate after editing
+      width: 0, // recalculate after editing
       lineHeight: 1.4,
       fontFamily: currentFont,
       x: 0,

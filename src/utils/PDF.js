@@ -17,7 +17,6 @@ export async function save(pdfFile, objects, name) {
     const pageObjects = objects[pageIndex];
     // 'y' starts from bottom in PDFLib, use this to calculate y
     const pageHeight = page.getHeight();
-    const pageWidth = page.getWidth();
     const embedProcesses = pageObjects.map(async (object) => {
       if (object.type === 'image') {
         let { file, x, y, width, height } = object;
@@ -41,6 +40,7 @@ export async function save(pdfFile, objects, name) {
         }
       } else if (object.type === 'text') {
         let { x, y, lines, lineHeight, size, fontFamily, width } = object;
+        const height = size * lineHeight * lines.length;
         const font = await fetchFont(fontFamily);
         const [textPage] = await pdfDoc.embedPdf(
           await makeTextPDF({
@@ -48,7 +48,7 @@ export async function save(pdfFile, objects, name) {
             fontSize: size,
             lineHeight,
             width,
-            height: pageHeight,
+            height,
             font: font.buffer || fontFamily, // built-in font family
             dy: font.correction(size, lineHeight),
           }),
@@ -56,9 +56,9 @@ export async function save(pdfFile, objects, name) {
         return () =>
           page.drawPage(textPage, {
             width,
-            height: pageHeight,
+            height,
             x,
-            y: -y,
+            y: pageHeight - y - height,
           });
       } else if (object.type === 'drawing') {
         let { x, y, path, scale } = object;
