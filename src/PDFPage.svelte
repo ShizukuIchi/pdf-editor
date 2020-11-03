@@ -20,7 +20,7 @@
     height = viewport.height;
     await _page.render({
       canvasContext: context,
-      viewport: viewport
+      viewport
     }).promise;
     measure();
     window.addEventListener("resize", measure);
@@ -31,7 +31,7 @@
   });
 </script>
 
-<div bind:clientWidth>
+<div>
   <canvas
     bind:this={canvas}
     class="max-w-full"
