@@ -6,7 +6,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public"
+    "start": "sirv public",
+    "docker": "sirv public --host 0.0.0.0 --port 5000"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^2.1.2",
