@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { pannable } from "./utils/pannable.js";
+  import {dict} from './lang.js'
   const dispatch = createEventDispatcher();
   let canvas;
   let x = 0;
@@ -71,13 +72,13 @@
       on:click={cancel}
       class=" w-24 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4
       rounded mr-4">
-      Cancel
+      {dict.Cancel}
     </button>
     <button
       on:click={finish}
-      class="w-24 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4
+      class=" w-24 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4
       rounded">
-      Done
+      {dict.Done}
     </button>
   </div>
   <svg class="w-full h-full pointer-events-none">

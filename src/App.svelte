@@ -8,6 +8,7 @@
   import Drawing from "./Drawing.svelte";
   import DrawingCanvas from "./DrawingCanvas.svelte";
   import prepareAssets, { fetchFont } from "./utils/prepareAssets.js";
+  import { dict } from "./lang";
   import {
     readAsArrayBuffer,
     readAsImage,
@@ -216,7 +217,7 @@
       class="whitespace-no-wrap bg-blue-500 hover:bg-blue-700 text-white
       font-bold py-1 px-3 md:px-4 rounded mr-3 cursor-pointer md:mr-4"
       for="pdf">
-      Choose PDF
+      {dict.OpenPDF}
     </label>
     <div
       class="relative mr-3 flex h-8 bg-gray-400 rounded-sm overflow-hidden
@@ -250,7 +251,7 @@
     <div class="justify-center mr-3 md:mr-4 w-full max-w-xs hidden md:flex">
       <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
       <input
-        placeholder="Rename your PDF here"
+        placeholder={dict.RenamePDF}
         type="text"
         class="flex-grow bg-transparent"
         bind:value={pdfName} />
@@ -261,7 +262,7 @@
       md:px-4 mr-3 md:mr-4 rounded"
       class:cursor-not-allowed={pages.length === 0 || saving || !pdfFile}
       class:bg-blue-700={pages.length === 0 || saving || !pdfFile}>
-      {saving ? 'Saving' : 'Save'}
+      {saving ? dict.Saving : dict.Save}
     </button>
     <a href="https://github.com/ShizukuIchi/pdf-editor">
       <img
@@ -357,7 +358,7 @@
     </div>
   {:else}
     <div class="w-full flex-grow flex justify-center items-center">
-      <span class=" font-bold text-3xl text-gray-500">Drag something here</span>
+      <span class=" font-bold text-3xl text-gray-500">{dict.DropPDF}</span>
     </div>
   {/if}
 </main>
