@@ -27,17 +27,21 @@
   let selectedPageIndex = -1;
   let saving = false;
   let addingDrawing = false;
+  let showTestPdf = true;
+
   // for test purpose
   onMount(async () => {
     try {
-      const res = await fetch("/test.pdf");
-      const pdfBlob = await res.blob();
-      await addPDF(pdfBlob);
-      selectedPageIndex = 0;
-      setTimeout(() => {
-        fetchFont(currentFont);
-        prepareAssets();
-      }, 5000);
+      if (showTestPdf) {
+        const res = await fetch("/test.pdf");
+        const pdfBlob = await res.blob();
+        await addPDF(pdfBlob);
+        selectedPageIndex = 0;
+        setTimeout(() => {
+          fetchFont(currentFont);
+          prepareAssets();
+        }, 5000);
+      }
       // const imgBlob = await (await fetch("/test.jpg")).blob();
       // addImage(imgBlob);
       // addTextField("測試!");
