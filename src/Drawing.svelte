@@ -9,6 +9,7 @@
   export let y;
   export let pageScale = 1;
   export let path;
+  export let scalable = true;
   const dispatch = createEventDispatcher();
   let startX;
   let startY;
@@ -101,14 +102,16 @@
     border-dashed"
     class:cursor-grabbing={operation === 'move'}
     class:operation>
-    <div
-      data-direction="left-top"
-      class="absolute left-0 top-0 w-10 h-10 bg-green-400 rounded-full
-      cursor-nwse-resize transform -translate-x-1/2 -translate-y-1/2 md:scale-25" />
-    <div
-      data-direction="right-bottom"
-      class="absolute right-0 bottom-0 w-10 h-10 bg-green-400 rounded-full
-      cursor-nwse-resize transform translate-x-1/2 translate-y-1/2 md:scale-25" />
+    {#if scalable}
+      <div
+        data-direction="left-top"
+        class="absolute left-0 top-0 w-10 h-10 bg-green-400 rounded-full
+        cursor-nwse-resize transform -translate-x-1/2 -translate-y-1/2 md:scale-25" />
+      <div
+        data-direction="right-bottom"
+        class="absolute right-0 bottom-0 w-10 h-10 bg-green-400 rounded-full
+        cursor-nwse-resize transform translate-x-1/2 translate-y-1/2 md:scale-25" />
+    {/if}
   </div>
   <div
     on:click={onDelete}
