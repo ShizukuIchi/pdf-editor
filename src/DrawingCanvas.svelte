@@ -7,6 +7,7 @@
   let x = 0;
   let y = 0;
   let path = "";
+  let strokeWidth = 5;  
   let minX = Infinity;
   let maxX = 0;
   let minY = Infinity;
@@ -52,7 +53,8 @@
       originHeight: height,
       path: paths.reduce((acc, cur) => {
         return acc + cur[0] + (cur[1] + dx) + "," + (cur[2] + dy);
-      }, "")
+      }, ""),
+      strokeWidth: strokeWidth
     });
   }
   function cancel() {
@@ -83,7 +85,7 @@
   </div>
   <svg class="w-full h-full pointer-events-none">
     <path
-      stroke-width="5"
+      stroke-width={strokeWidth}
       stroke-linejoin="round"
       stroke-linecap="round"
       d={path}
