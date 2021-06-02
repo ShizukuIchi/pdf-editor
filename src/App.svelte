@@ -140,7 +140,7 @@
         addingDrawing = true;
       }
     }
-    function addDrawing({originWidth, originHeight, path, scale, scalable}) {
+    function addDrawing({originWidth, originHeight, path, scale, strokeWidth, scalable}) {
       const id = genID();
       const object = {
         id,
@@ -152,7 +152,8 @@
         originHeight,
         width: originWidth * scale,
         scale,
-        scalable
+        scalable,
+        strokeWidth
       };
       allObjects = allObjects.map((objects, pIndex) =>
         pIndex === selectedPageIndex ? [...objects, object] : objects
@@ -301,12 +302,12 @@
         style="height: 50%;">
         <DrawingCanvas
           on:finish={e => {
-            const { originWidth, originHeight, path } = e.detail;
+            const { originWidth, originHeight, path, strokeWidth } = e.detail;
             let scale = 1;
             if (originWidth > 500) {
               scale = 500 / originWidth;
             }
-            addDrawing({originWidth, originHeight, path, scale, scalable: true});
+            addDrawing({originWidth, originHeight, path, scale, scalable: true, strokeWidth});
             addingDrawing = false;
           }}
           on:cancel={() => (addingDrawing = false)} />
@@ -374,6 +375,7 @@
                       width={object.width}
                       originWidth={object.originWidth}
                       originHeight={object.originHeight}
+                      strokeWidth={object.strokeWidth}
                       scalable={object.scalable}
                       pageScale={pagesScale[pIndex]} />
                   {/if}
@@ -382,9 +384,9 @@
               {#if addingPageOverlay && pIndex === selectedPageIndex}
                 <PageOverlay
                   on:finish={(e) => {
-                    const { originWidth, originHeight, path } = e.detail;
+                    const { originWidth, originHeight, path, strokeWidth } = e.detail;
                     let scale = 1;
-                    addDrawing({originWidth, originHeight, path, scale, scalable: false});
+                    addDrawing({originWidth, originHeight, path, scale, scalable: false, strokeWidth});
                     addingPageOverlay = false;
                   }}
                   on:cancel={() => (addingPageOverlay = false)} />
