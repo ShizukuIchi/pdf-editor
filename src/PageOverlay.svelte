@@ -3,6 +3,8 @@
   import { pannable } from "./utils/pannable.js";
   import Toolbar from "./Toolbar.svelte";
   import { dict } from "./lang.js";
+  import settings from "./settings";
+  
   const dispatch = createEventDispatcher();
   let canvas;
   let x = 0;
@@ -62,6 +64,7 @@
       path: paths.reduce((acc, cur) => {
         return acc + cur[0] + cur[1] + "," + cur[2];
       }, ""),
+      strokeWidth: settings.strokeWidth
     });
   }
   function cancel() {
@@ -74,6 +77,16 @@
     class="h-full flex justify-center items-center bg-gray-300 border-b
       border-gray-400"
   >
+    <div class="mr-2 flex items-center">
+      <img src="stroke.svg" class="w-6 mr-2" alt="Stroke width" />
+      <input
+        type="number"
+        min={settings.strokeWidthMin}
+        max={settings.strokeWidthMax}
+        step="1"
+        class="h-6 w-12 text-center flex-shrink-0 rounded-sm"
+        bind:value={settings.strokeWidth} />
+    </div>
     <button
       on:click={cancel}
       class=" bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4
@@ -102,7 +115,7 @@
 >
   <svg class="pointer-events-none" width="100%" height="100%">
     <path
-      stroke-width="2"
+      stroke-width={settings.strokeWidth}
       stroke-linejoin="round"
       stroke-linecap="round"
       d={path}
