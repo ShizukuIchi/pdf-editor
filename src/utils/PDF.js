@@ -61,7 +61,7 @@ export async function save(pdfFile, objects, name) {
             y: pageHeight - y - height,
           });
       } else if (object.type === 'drawing') {
-        let { x, y, path, scale } = object;
+        let { x, y, path, scale, strokeWidth } = object;
         const {
           pushGraphicsState,
           setLineCap,
@@ -77,7 +77,7 @@ export async function save(pdfFile, objects, name) {
             setLineJoin(LineJoinStyle.Round),
           );
           page.drawSvgPath(path, {
-            borderWidth: 5,
+            borderWidth: strokeWidth,
             scale,
             x,
             y: pageHeight - y,
