@@ -10,6 +10,7 @@
   export let pageScale = 1;
   export let path;
   export let scalable = true;
+  export let strokeWidth = 5;
   const dispatch = createEventDispatcher();
   let startX;
   let startY;
@@ -93,7 +94,7 @@
   class="absolute left-0 top-0 select-none"
   style="width: {width + dw}px; height: {(width + dw) / ratio}px; transform:
   translate({x + dx}px, {y + dy}px);">
-  <div
+  <div  
     use:pannable
     on:panstart={handlePanStart}
     on:panmove={handlePanMove}
@@ -121,7 +122,7 @@
   </div>
   <svg bind:this={svg} width="100%" height="100%">
     <path
-      stroke-width="5"
+      stroke-width={strokeWidth}
       stroke-linejoin="round"
       stroke-linecap="round"
       stroke="black"
