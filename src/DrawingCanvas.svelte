@@ -1,11 +1,13 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { pannable } from "./utils/pannable.js";
+  import {dict} from './lang.js'
   const dispatch = createEventDispatcher();
   let canvas;
   let x = 0;
   let y = 0;
   let path = "";
+  let strokeWidth = 5;  
   let minX = Infinity;
   let maxX = 0;
   let minY = Infinity;
@@ -51,7 +53,8 @@
       originHeight: height,
       path: paths.reduce((acc, cur) => {
         return acc + cur[0] + (cur[1] + dx) + "," + (cur[2] + dy);
-      }, "")
+      }, ""),
+      strokeWidth: strokeWidth
     });
   }
   function cancel() {
@@ -69,20 +72,20 @@
   <div class="absolute right-0 bottom-0 mr-4 mb-4 flex">
     <button
       on:click={cancel}
-      class=" w-24 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4
+      class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4
       rounded mr-4">
-      Cancel
+      {dict.Cancel}
     </button>
     <button
       on:click={finish}
-      class="w-24 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4
+      class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4
       rounded">
-      Done
+      {dict.Done}
     </button>
   </div>
   <svg class="w-full h-full pointer-events-none">
     <path
-      stroke-width="5"
+      stroke-width={strokeWidth}
       stroke-linejoin="round"
       stroke-linecap="round"
       d={path}

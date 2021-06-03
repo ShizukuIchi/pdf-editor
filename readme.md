@@ -6,7 +6,7 @@ No install. No server. ¯\\\_(ツ)\_/¯ https://pdf-editor.now.sh
 ## How to use pdf-editor?
 
 1. Click `Choose PDF` to upload a `.pdf` file.
-2. Add images, signatures, text to your PDF.
+2. Add images, signatures, text, freehand drawing to your PDF.
 3. Click `Save`.
 4. That's it! All is done **in your browser**.
 
@@ -14,6 +14,7 @@ No install. No server. ¯\\\_(ツ)\_/¯ https://pdf-editor.now.sh
 
 - Resize and move everything.
 - Add signatures.
+- Draw on page.
 - Adjust line height, font size, font family.
 - Mobile friendly.
 - Drag and drop to upload your PDF.
