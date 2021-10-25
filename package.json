@@ -18,7 +18,7 @@
     "postcss-load-config": "^2.1.0",
     "rollup": "^1.20.0",
     "rollup-plugin-livereload": "^1.0.0",
-    "rollup-plugin-svelte": "^5.0.3",
+    "rollup-plugin-svelte": "~6.1.1",
     "rollup-plugin-terser": "^5.1.2",
     "svelte": "^3.0.0",
     "svelte-preprocess": "^3.7.4",
