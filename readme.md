@@ -10,6 +10,12 @@ No install. No server. ¯\\\_(ツ)\_/¯ https://pdf-editor.now.sh
 3. Click `Save`.
 4. That's it! All is done **in your browser**.
 
+## How to build this Project?
+```
+npm i 
+npm run dev
+```
+
 ## Features
 
 - Resize and move everything.
