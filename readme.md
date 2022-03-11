@@ -32,7 +32,7 @@ yarn start
 
 ## Docker setup
 
-Run `make build` to create the docker image. Run `make run` to start the container. For reference, refere to [Makefile](./Makefile)
+Run `make build` to create the docker image. Run `make run` to start the container. For reference see [Makefile](./Makefile)
 
 ---
 
