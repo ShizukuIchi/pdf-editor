@@ -19,6 +19,17 @@ No install. No server. ¯\\\_(ツ)\_/¯ https://pdf-editor.now.sh
 - Drag and drop to upload your PDF.
 - 支援中文（標楷體）。
 
+## Run locally
+
+```sh
+# install dependencies
+yarn install
+# build assets
+yarn build
+# run on localhost:5000
+yarn start
+```
+
 ## Docker setup
 
 Run `make build` to create the docker image. Run `make run` to start the container. For reference, refere to [Makefile](./Makefile)
