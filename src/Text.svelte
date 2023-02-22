@@ -8,6 +8,7 @@
   import Delete from "./icons/Delete.svelte";
   import TextFamily from "./icons/TextFamily.svelte";
   import Text from "./icons/Text.svelte";
+  import LineHeight from "./icons/LineHeight.svelte";
   export let size;
   export let text;
   export let lineHeight;
@@ -177,7 +178,7 @@
       class="h-full flex justify-center items-center bg-gray-300 border-b
       border-gray-400">
       <div class="mr-2 flex items-center">
-        <img src="/line_height.svg" class="w-6 mr-2" alt="Line height" />
+        <LineHeight  class="w-6 mr-2" alt="Line height" />
         <input
           type="number"
           min="1"

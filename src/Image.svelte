@@ -166,7 +166,7 @@
     on:click={onDelete}
     class="absolute left-0 top-0 right-0 w-12 h-12 m-auto rounded-full bg-white
     cursor-pointer transform -translate-y-1/2 md:scale-25">
-    <Delete class={"w-full h-full"}  alt={"delete object"} />
+    <Delete height="50" width="50"   alt={"delete object"} />
   </div>
   <canvas class="w-full h-full" bind:this={canvas} />
 </div>
