@@ -5,6 +5,7 @@
   import { tapout } from "./utils/tapout.js";
   import { timeout } from "./utils/helper.js";
   import { Fonts } from "./utils/prepareAssets.js";
+  import Delete from "./icons/Delete.svelte";
   export let size;
   export let text;
   export let lineHeight;
@@ -221,7 +222,7 @@
       <div
         on:click={onDelete}
         class="w-5 h-5 rounded-full bg-white cursor-pointer">
-        <img class="w-full h-full" src="/delete.svg" alt="delete object" />
+          <Delete class={"w-full h-full"}  alt={"delete object"} />
       </div>
     </div>
   </Toolbar>

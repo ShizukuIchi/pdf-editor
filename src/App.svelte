@@ -16,6 +16,10 @@
   } from "./utils/asyncReader.js";
   import { ggID } from "./utils/helper.js";
   import { save } from "./utils/PDF.js";
+  import Gesture from "./icons/Gesture.svelte";
+  import Notes from "./icons/Notes.svelte";
+  import Edit from "./icons/Edit.svelte";
+  import Img from "./icons/Img.svelte";
   const genID = ggID();
   let pdfFile;
   let pdfName = "";
@@ -160,7 +164,7 @@
   }
   function updateObject(objectId, payload) {
     allObjects = allObjects.map((objects, pIndex) =>
-      pIndex == selectedPageIndex
+      pIndex === selectedPageIndex
         ? objects.map(object =>
             object.id === objectId ? { ...object, ...payload } : object
           )
@@ -169,7 +173,7 @@
   }
   function deleteObject(objectId) {
     allObjects = allObjects.map((objects, pIndex) =>
-      pIndex == selectedPageIndex
+      pIndex === selectedPageIndex
         ? objects.filter(object => object.id !== objectId)
         : objects
     );
@@ -227,7 +231,7 @@
         for="image"
         class:cursor-not-allowed={selectedPageIndex < 0}
         class:bg-gray-500={selectedPageIndex < 0}>
-        <img src="image.svg" alt="An icon for adding images" />
+          <Img alt={"An icon for adding images"}/>
       </label>
       <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
@@ -236,7 +240,7 @@
         class:cursor-not-allowed={selectedPageIndex < 0}
         class:bg-gray-500={selectedPageIndex < 0}
         on:click={onAddTextField}>
-        <img src="notes.svg" alt="An icon for adding text" />
+          <Notes alt={"An icon for adding text"}/>
       </label>
       <label
         class="flex items-center justify-center h-full w-8 hover:bg-gray-500
@@ -244,11 +248,11 @@
         on:click={onAddDrawing}
         class:cursor-not-allowed={selectedPageIndex < 0}
         class:bg-gray-500={selectedPageIndex < 0}>
-        <img src="gesture.svg" alt="An icon for adding drawing" />
+          <Gesture alt={"An icon for adding drawing"}/>
       </label>
     </div>
     <div class="justify-center mr-3 md:mr-4 w-full max-w-xs hidden md:flex">
-      <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
+        <Edit class={"mr-2"} alt={"a pen, edit pdf name"}/>
       <input
         placeholder="Rename your PDF here"
         type="text"
@@ -290,7 +294,7 @@
   {/if}
   {#if pages.length}
     <div class="flex justify-center px-5 w-full md:hidden">
-      <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
+      <Edit  class="mr-2" alt="a pen, edit pdf name" />
       <input
         placeholder="Rename your PDF here"
         type="text"
