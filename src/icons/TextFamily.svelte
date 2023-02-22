@@ -1,9 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<script>
+    export let height = 24;
+    export let width = 24;
+
+</script>
 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="475.082px" height="475.082px" viewBox="0 0 475.082 475.082" style="enable-background:new 0 0 475.082 475.082;"
-	 xml:space="preserve">
+     {height} {width} viewBox="0 0 475.082 475.082" style="enable-background:new 0 0 475.082 475.082;"
+     xml:space="preserve">
 <g>
 	<path d="M473.371,433.11c-10.657-3.997-20.458-6.563-29.407-7.706c-8.945-0.767-15.516-2.95-19.701-6.567
 		c-2.475-1.529-5.808-6.95-9.996-16.279c-7.806-15.604-13.989-29.786-18.555-42.537c-7.427-20.181-13.617-35.789-18.565-46.829
@@ -21,34 +23,34 @@
 		c-15.321-0.195-29.93-0.383-43.824-0.574l48.535-128.477c7.424,15.037,16.178,35.117,26.264,60.242
 		c11.425,27.79,20.179,50.727,26.273,68.809L251.245,270.941z"/>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
 </svg>

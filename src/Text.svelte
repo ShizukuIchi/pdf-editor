@@ -6,6 +6,8 @@
   import { timeout } from "./utils/helper.js";
   import { Fonts } from "./utils/prepareAssets.js";
   import Delete from "./icons/Delete.svelte";
+  import TextFamily from "./icons/TextFamily.svelte";
+  import Text from "./icons/Text.svelte";
   export let size;
   export let text;
   export let lineHeight;
@@ -185,7 +187,8 @@
           bind:value={_lineHeight} />
       </div>
       <div class="mr-2 flex items-center">
-        <img src="/text.svg" class="w-6 mr-2" alt="Font size" />
+        <Text  class="w-6 mr-2" alt="Font size" />
+
         <input
           type="number"
           min="12"
@@ -195,7 +198,7 @@
           bind:value={_size} />
       </div>
       <div class="mr-2 flex items-center">
-        <img src="/text-family.svg" class="w-4 mr-2" alt="Font family" />
+        <TextFamily  class="w-4 mr-2" alt="Font family" />
         <div class="relative w-32 md:w-40">
           <select
             bind:value={_fontFamily}
