@@ -7,7 +7,7 @@
   import Text from "./Text.svelte";
   import Drawing from "./Drawing.svelte";
   import DrawingCanvas from "./DrawingCanvas.svelte";
-  import prepareAssets, { fetchFont } from "./utils/prepareAssets.js";
+  import prepareAssets, {fetchFont, getAsset} from "./utils/prepareAssets.js";
   import {
     readAsArrayBuffer,
     readAsImage,
@@ -186,13 +186,19 @@
     if (!pdfFile || saving || !pages.length) return;
     saving = true;
     try {
-      await save(pdfFile, allObjects, pdfName, pagesScale);
+        const pdfBytes = await save(pdfFile, allObjects, pdfName, pagesScale);
     } catch (e) {
       console.log(e);
     } finally {
       saving = false;
     }
   }
+
+  async function downLoadPdf(pdfBytes, name) {
+      const download = await getAsset('download');
+      download(pdfBytes, name, 'application/pdf');
+  }
+
 </script>
 
 <svelte:window
