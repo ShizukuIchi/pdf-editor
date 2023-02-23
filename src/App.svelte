@@ -15,7 +15,7 @@
     readAsDataURL
   } from "./utils/asyncReader.js";
   import { ggID } from "./utils/helper.js";
-  import { save } from "./utils/PDF.js";
+  import {pdfBytesToFile, save} from "./utils/PDF.js";
   import Gesture from "./icons/Gesture.svelte";
   import Notes from "./icons/Notes.svelte";
   import Edit from "./icons/Edit.svelte";
@@ -187,6 +187,7 @@
     saving = true;
     try {
         const pdfBytes = await save(pdfFile, allObjects, pdfName, pagesScale);
+        downLoadPdf(pdfBytes, pdfName);
     } catch (e) {
       console.log(e);
     } finally {
@@ -195,8 +196,13 @@
   }
 
   async function downLoadPdf(pdfBytes, name) {
-      const download = await getAsset('download');
-      download(pdfBytes, name, 'application/pdf');
+      //const download = await getAsset('download');
+      //download(pdfBytes, name, 'application/pdf');
+      const file=await pdfBytesToFile(pdfBytes,name);
+      var link = document.createElement('a');
+      link.href = window.URL.createObjectURL(file);
+      link.download = name;
+      link.click();
   }
 
 </script>

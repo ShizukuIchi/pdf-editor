@@ -99,3 +99,15 @@ export async function save(pdfFile, objects, name) {
     throw e;
   }
 }
+
+/**
+ * covert
+ * @param theBlob
+ * @param fileName
+ * @returns {Promise<File>}
+ */
+export async function pdfBytesToFile(pdfBytes, fileName){
+    var theBlob = new Blob([pdfBytes], {type: "application/pdf"});
+    //A Blob() is almost a File() - it's just missing the two properties below which we will add
+    return new File([theBlob], fileName, { lastModified: new Date().getTime(), type: theBlob.type })
+}
