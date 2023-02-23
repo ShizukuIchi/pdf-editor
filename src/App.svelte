@@ -182,12 +182,20 @@
     if (!pdfFile || saving || !pages.length) return;
     saving = true;
     try {
-      await save(pdfFile, allObjects, pdfName, pagesScale);
+        const pdfBytes = await save(pdfFile, allObjects, pdfName, pagesScale);
+        downLoadPdf(pdfBytes, pdfName);
     } catch (e) {
       console.log(e);
     } finally {
       saving = false;
     }
+  }
+  async function downLoadPdf(pdfBytes, name) {
+      const file=await pdfBytesToFile(pdfBytes,name);
+      var link = document.createElement('a');
+      link.href = window.URL.createObjectURL(file);
+      link.download = name;
+      link.click();
   }
 </script>
 
