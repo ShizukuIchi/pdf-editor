@@ -226,7 +226,7 @@
       <div
         on:click={onDelete}
         class="w-5 h-5 rounded-full bg-white cursor-pointer">
-          <Delete height="50" width="50"  alt={"delete object"} />
+          <Delete height="20" width="20"  alt={"delete object"} />
       </div>
     </div>
   </Toolbar>
