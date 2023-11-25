@@ -265,7 +265,7 @@
     </button>
     <a href="https://github.com/ShizukuIchi/pdf-editor">
       <img
-        src="/GitHub-Mark-32px.png"
+        src="GitHub-Mark-32px.png"
         alt="A GitHub icon leads to personal GitHub page" />
     </a>
   </div>
