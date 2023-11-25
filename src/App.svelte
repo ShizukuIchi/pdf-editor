@@ -248,7 +248,7 @@
       </label>
     </div>
     <div class="justify-center mr-3 md:mr-4 w-full max-w-xs hidden md:flex">
-      <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
+      <img src="edit.svg" class="mr-2" alt="a pen, edit pdf name" />
       <input
         placeholder="Rename your PDF here"
         type="text"
@@ -265,7 +265,7 @@
     </button>
     <a href="https://github.com/ShizukuIchi/pdf-editor">
       <img
-        src="/GitHub-Mark-32px.png"
+        src="GitHub-Mark-32px.png"
         alt="A GitHub icon leads to personal GitHub page" />
     </a>
   </div>
@@ -290,7 +290,7 @@
   {/if}
   {#if pages.length}
     <div class="flex justify-center px-5 w-full md:hidden">
-      <img src="/edit.svg" class="mr-2" alt="a pen, edit pdf name" />
+      <img src="edit.svg" class="mr-2" alt="a pen, edit pdf name" />
       <input
         placeholder="Rename your PDF here"
         type="text"

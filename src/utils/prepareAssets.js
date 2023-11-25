@@ -11,7 +11,7 @@ const scripts = [
     name: 'download',
     src: 'https://unpkg.com/downloadjs@1.4.7',
   },
-  { name: 'makeTextPDF', src: '/makeTextPDF.js' },
+  { name: 'makeTextPDF', src: 'makeTextPDF.js' },
 ];
 
 const assets = {};
