@@ -50,7 +50,7 @@ function serve() {
       if (!started) {
         started = true;
 
-        require('child_process').spawn('yarn', ['start', '--dev'], {
+        require('child_process').spawn('npm', ['start', '--dev'], {
           stdio: ['ignore', 'inherit', 'inherit'],
           shell: true,
         });
