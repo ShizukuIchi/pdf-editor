@@ -1,3 +1,5 @@
+<svelte:options immutable={true} />
+
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { pannable } from "./utils/pannable.js";
@@ -26,20 +28,31 @@
     canvas.getContext("2d").drawImage(payload, 0, 0);
     let scale = 1;
     const limit = 500;
+    /**
+     * So basically keela width or height or kooda iruntha scale set panram
+     */
     if (width > limit) {
       scale = limit / width;
     }
+    /**
+     * height limit a vida kooda naa
+     * Inga scale kuranjathaa illa limit/height kuranja thaa nu paarthu.
+     * Ethu kurajatho adha scale aa set panram
+     */
     if (height > limit) {
       scale = Math.min(scale, limit / height);
     }
+    /**
+     * Inga udpate ndra dha dispatch panrom.
+     */
     dispatch("update", {
       width: width * scale,
-      height: height * scale
+      height: height * scale,
     });
     if (!["image/jpeg", "image/png"].includes(file.type)) {
-      canvas.toBlob(blob => {
+      canvas.toBlob((blob) => {
         dispatch("update", {
-          file: blob
+          file: blob,
         });
       });
     }
@@ -72,7 +85,7 @@
     if (operation === "move") {
       dispatch("update", {
         x: x + dx,
-        y: y + dy
+        y: y + dy,
       });
       dx = 0;
       dy = 0;
@@ -81,7 +94,7 @@
         x: x + dx,
         y: y + dy,
         width: width + dw,
-        height: height + dh
+        height: height + dh,
       });
       dx = 0;
       dy = 0;
@@ -106,6 +119,68 @@
   onMount(render);
 </script>
 
+<div
+  class="absolute left-0 top-0 select-none"
+  style="width: {width + dw}px; height: {height +
+    dh}px; transform: translate({x + dx}px,
+  {y + dy}px);"
+>
+  <div
+    use:pannable
+    on:panstart={handlePanStart}
+    on:panmove={handlePanMove}
+    on:panend={handlePanEnd}
+    class="absolute w-full h-full cursor-grab"
+    class:cursor-grabbing={operation === "move"}
+    class:operation
+  >
+    <div
+      data-direction="left"
+      class="resize-border h-full w-1 left-0 top-0 border-l cursor-ew-resize"
+    />
+    <div
+      data-direction="top"
+      class="resize-border w-full h-1 left-0 top-0 border-t cursor-ns-resize"
+    />
+    <div
+      data-direction="bottom"
+      class="resize-border w-full h-1 left-0 bottom-0 border-b cursor-ns-resize"
+    />
+    <div
+      data-direction="right"
+      class="resize-border h-full w-1 right-0 top-0 border-r cursor-ew-resize"
+    />
+    <div
+      data-direction="left-top"
+      class="resize-corner left-0 top-0 cursor-nwse-resize transform
+      -translate-x-1/2 -translate-y-1/2 md:scale-25"
+    />
+    <div
+      data-direction="right-top"
+      class="resize-corner right-0 top-0 cursor-nesw-resize transform
+      translate-x-1/2 -translate-y-1/2 md:scale-25"
+    />
+    <div
+      data-direction="left-bottom"
+      class="resize-corner left-0 bottom-0 cursor-nesw-resize transform
+      -translate-x-1/2 translate-y-1/2 md:scale-25"
+    />
+    <div
+      data-direction="right-bottom"
+      class="resize-corner right-0 bottom-0 cursor-nwse-resize transform
+      translate-x-1/2 translate-y-1/2 md:scale-25"
+    />
+  </div>
+  <div
+    on:click={onDelete}
+    class="absolute left-0 top-0 right-0 w-12 h-12 m-auto rounded-full bg-white
+    cursor-pointer transform -translate-y-1/2 md:scale-25"
+  >
+    <img class="w-full h-full" src="/delete.svg" alt="delete object" />
+  </div>
+  <canvas class="w-full h-full" bind:this={canvas} />
+</div>
+
 <style>
   .operation {
     background-color: rgba(0, 0, 0, 0.3);
@@ -117,55 +192,3 @@
     @apply absolute w-10 h-10 bg-blue-300 rounded-full;
   }
 </style>
-
-<svelte:options immutable={true} />
-<div
-  class="absolute left-0 top-0 select-none"
-  style="width: {width + dw}px; height: {height + dh}px; transform: translate({x + dx}px,
-  {y + dy}px);">
-
-  <div
-    use:pannable
-    on:panstart={handlePanStart}
-    on:panmove={handlePanMove}
-    on:panend={handlePanEnd}
-    class="absolute w-full h-full cursor-grab"
-    class:cursor-grabbing={operation === 'move'}
-    class:operation>
-    <div
-      data-direction="left"
-      class="resize-border h-full w-1 left-0 top-0 border-l cursor-ew-resize" />
-    <div
-      data-direction="top"
-      class="resize-border w-full h-1 left-0 top-0 border-t cursor-ns-resize" />
-    <div
-      data-direction="bottom"
-      class="resize-border w-full h-1 left-0 bottom-0 border-b cursor-ns-resize" />
-    <div
-      data-direction="right"
-      class="resize-border h-full w-1 right-0 top-0 border-r cursor-ew-resize" />
-    <div
-      data-direction="left-top"
-      class="resize-corner left-0 top-0 cursor-nwse-resize transform
-      -translate-x-1/2 -translate-y-1/2 md:scale-25" />
-    <div
-      data-direction="right-top"
-      class="resize-corner right-0 top-0 cursor-nesw-resize transform
-      translate-x-1/2 -translate-y-1/2 md:scale-25" />
-    <div
-      data-direction="left-bottom"
-      class="resize-corner left-0 bottom-0 cursor-nesw-resize transform
-      -translate-x-1/2 translate-y-1/2 md:scale-25" />
-    <div
-      data-direction="right-bottom"
-      class="resize-corner right-0 bottom-0 cursor-nwse-resize transform
-      translate-x-1/2 translate-y-1/2 md:scale-25" />
-  </div>
-  <div
-    on:click={onDelete}
-    class="absolute left-0 top-0 right-0 w-12 h-12 m-auto rounded-full bg-white
-    cursor-pointer transform -translate-y-1/2 md:scale-25">
-    <img class="w-full h-full" src="/delete.svg" alt="delete object" />
-  </div>
-  <canvas class="w-full h-full" bind:this={canvas} />
-</div>

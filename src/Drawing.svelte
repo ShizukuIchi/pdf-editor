@@ -1,3 +1,5 @@
+<svelte:options immutable={true} />
+
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { pannable } from "./utils/pannable.js";
@@ -9,6 +11,7 @@
   export let y;
   export let pageScale = 1;
   export let path;
+
   const dispatch = createEventDispatcher();
   let startX;
   let startY;
@@ -48,7 +51,7 @@
     if (operation === "move") {
       dispatch("update", {
         x: x + dx,
-        y: y + dy
+        y: y + dy,
       });
       dx = 0;
       dy = 0;
@@ -57,7 +60,7 @@
         x: x + dx,
         y: y + dy,
         width: width + dw,
-        scale: (width + dw) / originWidth
+        scale: (width + dw) / originWidth,
       });
       dx = 0;
       dy = 0;
@@ -81,17 +84,11 @@
   onMount(render);
 </script>
 
-<style>
-  .operation {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-</style>
-
-<svelte:options immutable={true} />
 <div
   class="absolute left-0 top-0 select-none"
   style="width: {width + dw}px; height: {(width + dw) / ratio}px; transform:
-  translate({x + dx}px, {y + dy}px);">
+  translate({x + dx}px, {y + dy}px);"
+>
   <div
     use:pannable
     on:panstart={handlePanStart}
@@ -99,21 +96,25 @@
     on:panend={handlePanEnd}
     class="absolute w-full h-full cursor-grab border border-gray-400
     border-dashed"
-    class:cursor-grabbing={operation === 'move'}
-    class:operation>
+    class:cursor-grabbing={operation === "move"}
+    class:operation
+  >
     <div
       data-direction="left-top"
       class="absolute left-0 top-0 w-10 h-10 bg-green-400 rounded-full
-      cursor-nwse-resize transform -translate-x-1/2 -translate-y-1/2 md:scale-25" />
+      cursor-nwse-resize transform -translate-x-1/2 -translate-y-1/2 md:scale-25"
+    />
     <div
       data-direction="right-bottom"
       class="absolute right-0 bottom-0 w-10 h-10 bg-green-400 rounded-full
-      cursor-nwse-resize transform translate-x-1/2 translate-y-1/2 md:scale-25" />
+      cursor-nwse-resize transform translate-x-1/2 translate-y-1/2 md:scale-25"
+    />
   </div>
   <div
     on:click={onDelete}
     class="absolute left-0 top-0 right-0 w-12 h-12 m-auto rounded-full bg-white
-    cursor-pointer transform -translate-y-1/2 md:scale-25">
+    cursor-pointer transform -translate-y-1/2 md:scale-25"
+  >
     <img class="w-full h-full" src="/delete.svg" alt="delete object" />
   </div>
   <svg bind:this={svg} width="100%" height="100%">
@@ -123,6 +124,13 @@
       stroke-linecap="round"
       stroke="black"
       fill="none"
-      d={path} />
+      d={path}
+    />
   </svg>
 </div>
+
+<style>
+  .operation {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+</style>
