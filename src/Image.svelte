@@ -14,11 +14,12 @@
   let startY;
   let canvas;
   let operation = "";
-  let directions = [];
+  let direction = "";
   let dx = 0;
   let dy = 0;
   let dw = 0;
   let dh = 0;
+  let ratio = null;
   async function render() {
     // use canvas to prevent img tag's auto resize
     canvas.width = width;
@@ -50,20 +51,59 @@
     if (operation === "move") {
       dx = _dx;
       dy = _dy;
-    } else if (operation === "scale") {
-      if (directions.includes("left")) {
-        dx = _dx;
+      return;
+    }
+    if (operation === "scale") {
+      if (direction === "left") {
         dw = -_dx;
-      }
-      if (directions.includes("top")) {
-        dy = _dy;
+        if (ratio !== null) {
+          [dw, dh] = calculateDimensionWithRatio(dw, -Infinity);
+        }
+        dx = -dw;
+      } else if (direction === "left-top") {
+        dw = -_dx;
         dh = -_dy;
-      }
-      if (directions.includes("right")) {
+        if (ratio !== null) {
+          [dw, dh] = calculateDimensionWithRatio(dw, dh);
+        }
+        dy = -dh;
+        dx = -dw;
+      } else if (direction === "top") {
+        dh = -_dy;
+        if (ratio !== null) {
+          [dw, dh] = calculateDimensionWithRatio(-Infinity, dh);
+        }
+        dy = -dh;
+      } else if (direction === "right-top") {
         dw = _dx;
-      }
-      if (directions.includes("bottom")) {
+        dh = -_dy;
+        if (ratio !== null) {
+          [dw, dh] = calculateDimensionWithRatio(dw, dh);
+        }
+        dy = -dh;
+      } else if (direction === "right") {
+        dw = _dx;
+        if (ratio !== null) {
+          [dw, dh] = calculateDimensionWithRatio(dw, -Infinity);
+        }
+      } else if (direction === "right-bottom") {
+        dw = _dx;
         dh = _dy;
+        if (ratio !== null) {
+          [dw, dh] = calculateDimensionWithRatio(dw, dh);
+        }
+      } else if (direction === "bottom") {
+        dh = _dy;
+        if (ratio !== null) {
+          [dw, dh] = calculateDimensionWithRatio(-Infinity, dh);
+        }
+      } else if (direction === "left-bottom") {
+        dw = -_dx;
+        dh = _dy;
+        if (ratio !== null) {
+          [dw, dh] = calculateDimensionWithRatio(dw, dh);
+        }
+        dx = -dw;
       }
     }
   }
@@ -87,9 +127,17 @@
       dy = 0;
       dw = 0;
       dh = 0;
-      directions = [];
+      direction = "";
     }
     operation = "";
+  }
+  function calculateDimensionWithRatio(dw, dh) {
+    const dhFromDw = (width + dw) / ratio - height;
+    if (dh > dhFromDw) {
+      const dwFromDh = (height + dh) * ratio - width;
+      return [dwFromDh, dh];
+    }
+    return [dw, dhFromDw]
   }
   function handlePanStart(event) {
     startX = event.detail.x;
@@ -98,12 +146,33 @@
       return (operation = "move");
     }
     operation = "scale";
-    directions = event.detail.target.dataset.direction.split("-");
+    direction = event.detail.target.dataset.direction;
   }
   function onDelete() {
     dispatch("delete");
   }
   onMount(render);
+  onMount(() => {
+    function isShiftKey(key) {
+      return key === 'Shift';
+    }
+    function onKeyDown(e) {
+      if (isShiftKey(e.key)) {
+        ratio = (width + dw) / (height + dh);
+      }
+    }
+    function onKeyUp(e) {
+      if (isShiftKey(e.key)) {
+        ratio = null;
+      }
+    }
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    }
+  });
 </script>
 
 <style>
