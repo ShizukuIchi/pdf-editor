@@ -19,15 +19,17 @@ export default {
   plugins: [
     svelte({
       preprocess: sveltePreprocess({ postcss: true }),
-      // enable run-time checks when not in production
-      dev: !production,
-      // we'll extract any component CSS out into
-      // a separate file - better for performance
-      css: (css) => {
-        css.write('public/build/bundle.css');
-      },
+      emitCss: false,
+      compilerOptions: {
+        // enable run-time checks when not in production
+        dev: !production,
+        // we'll extract any component CSS out into
+        // a separate file - better for performance
+        css: (css) => {
+          css.write('public/build/bundle.css');
+        }
+      }
     }),
-
     resolve({
       browser: true,
       dedupe: ['svelte'],
@@ -49,12 +51,11 @@ function serve() {
     writeBundle() {
       if (!started) {
         started = true;
-
-        require('child_process').spawn('yarn', ['start', '--dev'], {
+        require('child_process').spawn('npm', ['start', '--dev'], {
           stdio: ['ignore', 'inherit', 'inherit'],
           shell: true,
         });
-        open('http://localhost:5000');
+        open('http://localhost:5000/index.html');
       }
     },
   };
