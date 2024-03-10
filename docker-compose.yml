@@ -1,0 +1,15 @@
+---
+version: "2"
+
+services:
+  pdfeditor:
+    container_name: pdfeditor
+    image: mhart/alpine-node:latest
+    volumes:
+      - .:/app
+    working_dir: /app
+    ports:
+      - '127.0.0.1:5000:5000'
+    restart: unless-stopped
+    command: >
+      sh -c 'npm install && npm run build && npm run docker'
